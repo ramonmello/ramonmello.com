@@ -8,4 +8,5 @@ export const Title = styled.h1`
 export const Subtitle = styled.h3`
   font-size: 2.6rem;
   font-weight: 300;
+  /* padding-bottom: 20rem; */
 `

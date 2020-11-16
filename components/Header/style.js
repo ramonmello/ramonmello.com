@@ -17,20 +17,25 @@ export const Content = styled.div`
   margin: 0 auto;
   max-width: 98rem;
   padding: 2rem;
+
+  .navigation {
+    display: flex;
+    align-items: center;
+  }
 `
 
 export const Instagram = styled(InstagramIcon).attrs({
-  size: 36,
+  size: 37,
   title: 'Instagram'
 })`
-  color: #d2d2d2;
+  color: #c5c5c5;
 `
 
 export const GitHub = styled(GithubIcon).attrs({
   size: 29,
   title: 'GitHub'
 })`
-color: #d2d2d2;
+ color: #c5c5c5;
 margin-left: 1rem;
 `
 
@@ -38,6 +43,6 @@ export const LinkedIn = styled(LinkedinIcon).attrs({
   size: 29,
   title: 'LinkedIn'
 })`
-color: #d2d2d2;
+color: #c5c5c5;
 margin-left: 1rem;
 `
