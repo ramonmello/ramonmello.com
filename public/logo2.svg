@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="390"
+   height="500"
+   viewBox="0 0 103.18786 132.29167"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.1 (0767f8302a, 2020-10-17)"
+   sodipodi:docname="logo-outra-versão.svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,-86.487106,-86.487106,0,611.7616,342.39847)"
+       spreadMethod="pad"
+       id="linearGradient928">
+      <stop
+         style="stop-opacity:1;stop-color:#009f5b"
+         offset="0"
+         id="stop924" />
+      <stop
+         style="stop-opacity:1;stop-color:#4b1a62"
+         offset="1"
+         id="stop926" />
+    </linearGradient>
+    <linearGradient
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,-86.487106,-86.487106,0,611.7616,342.39847)"
+       spreadMethod="pad"
+       id="linearGradient859">
+      <stop
+         style="stop-opacity:1;stop-color:#009f5b"
+         offset="0"
+         id="stop855" />
+      <stop
+         style="stop-opacity:1;stop-color:#4b1a62"
+         offset="1"
+         id="stop857" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath871">
+      <path
+         d="M 0,595.28 H 841.89 V 0 H 0 Z"
+         id="path869" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath120">
+      <path
+         d="M 0,595.28 H 841.89 V 0 H 0 Z"
+         id="path118" />
+    </clipPath>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient859"
+       id="linearGradient910"
+       x1="14.5969"
+       y1="12.285924"
+       x2="413.68958"
+       y2="532.51068"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4367983"
+     inkscape:cx="329.18525"
+     inkscape:cy="259.61141"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1024"
+     inkscape:window-x="1366"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 99.203694,128.85782 H 58.594793 V 116.6917 h 40.608901 z"
+       style="fill:#304a5f;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.352778"
+       id="path112" />
+    <path
+       style="opacity:1;fill:url(#linearGradient910);fill-opacity:1;stroke-width:6.3"
+       d="M 14.5969,249.61917 V 12.285924 H 90.808017 167.01913 V 66.92129 121.55666 H 272.11391 377.2087 v 76.21111 76.21112 H 272.11391 167.01913 V 380.46566 486.95242 H 90.808017 14.5969 Z M 119.69168,409.34932 V 379.07367 H 89.416033 59.140384 v 30.27565 30.27565 h 30.275649 30.275647 z m 0,-107.53075 V 271.89091 H 89.416033 59.140384 v 29.92766 29.92765 h 30.275649 30.275647 z m 0,-107.53076 V 164.01216 H 89.416033 59.140384 v 30.27565 30.27565 h 30.275649 30.275647 z m 105.09478,0 v -30.27565 h -30.27565 -30.27564 v 30.27565 30.27565 h 30.27564 30.27565 z m 105.09478,0 V 164.01216 H 299.6056 269.32995 v 30.27565 30.27565 h 30.27565 30.27564 z M 117.60371,89.193032 V 58.917383 H 87.328057 57.052408 v 30.275649 30.275648 h 30.275649 30.275653 z"
+       id="path902"
+       transform="matrix(0.26458426,0,0,0.26458426,0,-2.2910256e-4)" />
+  </g>
+</svg>

@@ -2,9 +2,8 @@ import { InstagramAlt as InstagramIcon } from '@styled-icons/boxicons-logos/Inst
 import { Github as GithubIcon, Linkedin as LinkedinIcon } from '@styled-icons/fa-brands'
 import styled from 'styled-components'
 
-export const Wrapper = styled.header`
-  background-color:rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
+export const Wrapper = styled.header`  
+  backdrop-filter: blur(1.6rem);
   max-width: 100%;
   position: sticky;
   top: 0;
@@ -32,6 +31,7 @@ export const GitHub = styled(GithubIcon).attrs({
   title: 'GitHub'
 })`
 color: #d2d2d2;
+margin-left: 1rem;
 `
 
 export const LinkedIn = styled(LinkedinIcon).attrs({
@@ -39,4 +39,5 @@ export const LinkedIn = styled(LinkedinIcon).attrs({
   title: 'LinkedIn'
 })`
 color: #d2d2d2;
+margin-left: 1rem;
 `

@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: --apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: #282C34;
+    background: linear-gradient(270deg, rgba(255, 255, 255, 0.5) 0%, #F1F1F1 100%);
   }
 
  a {
