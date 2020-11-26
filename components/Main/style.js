@@ -12,7 +12,7 @@ export const Main = styled.main`
 export const Title = styled.h1`
   font-size: 6.4rem;
   font-weight: 300;
-  letter-spacing: -0.36rem;
+  letter-spacing: -0.16rem;
   .name {
     background-color: #e9bcb7;
     background-image: linear-gradient(315deg, #e9bcb7 0%, #29524a 74%);

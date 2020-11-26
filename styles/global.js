@@ -20,6 +20,15 @@ const GlobalStyle = createGlobalStyle`
    color: inherit;
    text-decoration: none;
  }
+
+ ::-webkit-scrollbar {
+  width: 1.6rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DDD9CE;
+  border-radius: 1rem;
+}
 `
 
 export default GlobalStyle

@@ -29,20 +29,39 @@ export const Instagram = styled(InstagramIcon).attrs({
   title: 'Instagram'
 })`
   color: #c5c5c5;
+  transition: color 0.5s ease-in-out;
+
+  &:hover {
+    color: #a1a1a1;
+  }
 `
 
 export const GitHub = styled(GithubIcon).attrs({
   size: 29,
   title: 'GitHub'
 })`
- color: #c5c5c5;
-margin-left: 1rem;
+  color: #c5c5c5;
+  margin-left: 1rem;
+  transition: color 0.5s ease-in-out;
+
+  &:hover {
+    color: #a1a1a1;
+  }
 `
 
 export const LinkedIn = styled(LinkedinIcon).attrs({
   size: 29,
   title: 'LinkedIn'
 })`
-color: #c5c5c5;
-margin-left: 1rem;
+  color: #c5c5c5;
+  margin-left: 1rem;
+  transition: color 0.5s ease-in-out;
+
+  &:hover {
+    color: #a1a1a1;
+  }
 `
+
+// branco gelo
+// #DDD9CE
+// #ccc8bc
