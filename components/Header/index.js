@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <S.Wrapper>
       <S.Content>
-        <Image src="/logo4.svg" width="36" height="50" alt="Logotipo Ramon" />
+        <Image src="/logo4.svg" width={36} height={50} alt="Logotipo Ramon" />
         <div className="navigation">
           <a href="https://www.instagram.com/codingwithramon/" target="_black">
             <S.Instagram />

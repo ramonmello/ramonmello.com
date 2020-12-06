@@ -15,7 +15,7 @@ export const Content = styled.div`
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
-  max-width: 98rem;
+  max-width: 122.7rem;
   padding: 2rem;
 
   .navigation {

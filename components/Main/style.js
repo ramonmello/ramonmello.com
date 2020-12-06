@@ -31,14 +31,9 @@ export const Subtitle = styled.h3`
 `
 
 export const SctionTitle = styled.h3`
+  text-align: center;
   font-size: 3.2rem;
-  font-weight: 300;
+  font-weight: 700;
   padding-bottom: 2rem;
   letter-spacing: -0.08rem;
-`
-
-export const TextParagraph = styled.p`
-  font-size: 1.6rem;
-  font-weight: 300;
-  padding-bottom: 2rem;
 `
