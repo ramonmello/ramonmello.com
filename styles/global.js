@@ -1,11 +1,41 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: local(''),
+      url('/fonts/ubuntu-v15-latin-300.woff2') format('woff2'),       
+  }
+  
+  @font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local(''),
+      url('/fonts/ubuntu-v15-latin-regular.woff2') format('woff2'),        
+  }
+  
+  @font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: local(''),
+      url('/fonts/ubuntu-v15-latin-700.woff2') format('woff2'),        
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
   html {
     font-size: 62.5%;
   }

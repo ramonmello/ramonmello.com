@@ -1,8 +1,8 @@
 import * as S from './style'
 
-const Section = ({children}) => {
+const Section = ({children, ...rest}) => {
   return (
-    <S.Wrapper>
+    <S.Wrapper {...rest}>
       <S.Section>
       {children}
       </S.Section>
