@@ -41,7 +41,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: Ubuntu;
+    font-family: "Ubuntu";
     color: #282C34;
   }
 
