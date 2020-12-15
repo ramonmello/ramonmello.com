@@ -5,7 +5,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Ubuntu';
     font-style: normal;
     font-weight: 300;
-    font-display: swap;
+    /* font-display: swap; */
     src: local(''),
       url('/fonts/ubuntu-v15-latin-300.woff2') format('woff2'),       
   }
@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Ubuntu';
     font-style: normal;
     font-weight: 400;
-    font-display: swap;
+    /* font-display: swap; */
     src: local(''),
       url('/fonts/ubuntu-v15-latin-regular.woff2') format('woff2'),        
   }
@@ -23,7 +23,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: Ubuntu;
     font-style: normal;
     font-weight: 700;
-    font-display: swap;
+    /* font-display: swap; */
     src: local(''),
       url('/fonts/ubuntu-v15-latin-700.woff2') format('woff2'),        
   }
