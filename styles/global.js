@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
   }
   
   @font-face {
-    font-family: 'Ubuntu';
+    font-family: Ubuntu;
     font-style: normal;
     font-weight: 700;
     font-display: swap;
