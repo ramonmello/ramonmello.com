@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import styled  from 'styled-components'
 import Section from '../Section'
 
@@ -19,6 +18,7 @@ export const Title = styled.h1`
     background-color: #e9bcb7;
     background-image: linear-gradient(315deg, #e9bcb7 0%, #29524a 74%);
     background-clip: text;
+    font-weight: 700;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
