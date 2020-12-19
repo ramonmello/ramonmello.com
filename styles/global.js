@@ -6,8 +6,8 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: 300;
     font-display: swap;
-    src: local('Ubuntu'),
-      url('./fonts/ubuntu-v15-latin-300.woff2') format('woff2'),               
+    src: local(''),
+      url('/fonts/ubuntu-v15-latin-300.woff2') format('woff2'),               
   }
   
   @font-face {
@@ -15,8 +15,8 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local('Ubuntu'),
-      url('./fonts/ubuntu-v15-latin-regular.woff2') format('woff2'),                 
+    src: local(''),
+      url('/fonts/ubuntu-v15-latin-regular.woff2') format('woff2'),                 
   }
   
   @font-face {
@@ -24,8 +24,8 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: local('Ubuntu'),
-      url('./fonts/ubuntu-v15-latin-700.woff2') format('woff2'),              
+    src: local(''),
+      url('/fonts/ubuntu-v15-latin-700.woff2') format('woff2'),              
   }
 
   * {
@@ -41,7 +41,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Ubuntu', --apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Ubuntu';
     color: #282C34;
   }
 
