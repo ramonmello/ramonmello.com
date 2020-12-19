@@ -7,7 +7,7 @@ export default function Main() {
     <S.Main>
       <Header />
       <S.WelcomeSection styles="justify-content: center;">
-        <S.Title>Hi, I'm <br/><b className='name'>Ramon Mello</b></S.Title>
+        <S.Title>Hi, I'm <br/><span className='name'>Ramon Mello</span></S.Title>
         <S.Subtitle>Software Developer</S.Subtitle>
       </S.WelcomeSection>
       <S.ProductSection>
