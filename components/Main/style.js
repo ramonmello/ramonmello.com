@@ -3,7 +3,7 @@ import styled  from 'styled-components'
 import Section from '../Section'
 
 export const Main = styled.main`
-  @keyframes fadein {
+  @keyframes fadein {    
     from { opacity: 0; }
     to   { opacity: 1; }
   }
