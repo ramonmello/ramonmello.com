@@ -2,30 +2,27 @@ import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
-    font-family: 'Ubuntu';
+    font-family: 'Fira Sans';
     font-style: normal;
     font-weight: 300;
-    font-display: swap;
     src: local(''),
-      url('/fonts/ubuntu-v15-latin-300.woff2') format('woff2'),               
+        url('/fonts/fira-sans-v10-latin-300.woff2') format('woff2');
   }
-  
+
   @font-face {
-    font-family: 'Ubuntu';
+    font-family: 'Fira Sans';
     font-style: normal;
     font-weight: 400;
-    font-display: swap;
     src: local(''),
-      url('/fonts/ubuntu-v15-latin-regular.woff2') format('woff2'),                 
+        url('/fonts/fira-sans-v10-latin-regular.woff2') format('woff2');  
   }
-  
+
   @font-face {
-    font-family: 'Ubuntu';
+    font-family: 'Fira Sans';
     font-style: normal;
     font-weight: 700;
-    font-display: swap;
     src: local(''),
-      url('/fonts/ubuntu-v15-latin-700.woff2') format('woff2'),              
+        url('/fonts/fira-sans-v10-latin-700.woff2') format('woff2');    
   }
 
   * {
@@ -41,7 +38,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Ubuntu';
+    font-family: 'Fira Sans';
     color: #282C34;
   }
 
