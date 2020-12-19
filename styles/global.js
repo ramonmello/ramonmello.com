@@ -6,7 +6,7 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: 300;
     src: local(''),
-        url('/fonts/fira-sans-v10-latin-300.woff2') format('woff2'),
+        url('/fonts/fira-sans-v10-latin-300.woff2') format('woff2');
   }
 
   @font-face {
@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: 400;
     src: local(''),
-        url('/fonts/fira-sans-v10-latin-regular.woff2') format('woff2'),     
+        url('/fonts/fira-sans-v10-latin-regular.woff2') format('woff2');  
   }
 
   @font-face {
@@ -22,7 +22,7 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: 700;
     src: local(''),
-        url('/fonts/fira-sans-v10-latin-700.woff2') format('woff2'),     
+        url('/fonts/fira-sans-v10-latin-700.woff2') format('woff2');    
   }
 
   * {
