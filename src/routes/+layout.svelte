@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../styles/tailwind.css';
 	import { page } from '$app/stores';
 	import { setLanguageTag, sourceLanguageTag, type AvailableLanguageTag } from '$paraglide/runtime';
 	import { browser } from '$app/environment';
