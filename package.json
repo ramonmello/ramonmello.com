@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "paraglide-js compile --project ./project.inlang && vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -11,11 +11,12 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"postinstall": "paraglide-js compile --project ./project.inlang"
 	},
 	"devDependencies": {
-		"@fontsource/fira-mono": "^4.5.10",
-		"@neoconfetti/svelte": "^1.0.0",
+		"@inlang/paraglide-js": "1.0.0-prerelease.27",
+		"@inlang/paraglide-js-adapter-vite": "^1.0.4",
 		"@playwright/test": "^1.40.1",
 		"@sveltejs/adapter-auto": "^3.1.0",
 		"@sveltejs/kit": "^2.0.6",

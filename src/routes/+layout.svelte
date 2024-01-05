@@ -1,53 +1,19 @@
-<script>
-	import Header from './Header.svelte';
-	import './styles.css';
+<script lang="ts">
+	import { page } from '$app/stores';
+	import { setLanguageTag, sourceLanguageTag, type AvailableLanguageTag } from '$paraglide/runtime';
+	import { browser } from '$app/environment';
+	import I18NHeader from '$lib/I18NHeader.svelte';
+
+	//Use the default language if no language is given
+	$: lang = ($page.params.lang as AvailableLanguageTag) ?? sourceLanguageTag;
+	$: setLanguageTag(lang);
+
+	//Set the lang attribute on the html tag
+	$: if (browser) document.documentElement.lang = lang;
 </script>
 
-<div class="app">
-	<Header />
+<I18NHeader />
 
-	<main>
-		<slot />
-	</main>
-
-	<footer>
-		<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
-	</footer>
-</div>
-
-<style>
-	.app {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-
-	main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
-	}
-</style>
+{#key lang}
+	<slot />
+{/key}
