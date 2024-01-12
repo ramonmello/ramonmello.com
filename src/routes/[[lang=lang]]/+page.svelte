@@ -2,10 +2,8 @@
 	<section class="flex flex-1 flex-col items-center justify-center">
 		<div>
 			<h1 class="text-9xl font-bold">Ramon</h1>
-			<div class="flex items-center justify-between">
-				<svg width="85" height="85" viewBox="0 0 85 85" fill="none" class="mb-6 mr-5">
-					<circle cx="42.5" cy="42.5" r="42.5" fill="yellow" />
-				</svg>
+			<div class="-mt-4 inline-flex w-full justify-between">
+				<img src="./images/avatar.jpeg" alt="" class="h-24 w-24 rounded-full" />
 				<h1 class="text-9xl font-bold">Mello</h1>
 			</div>
 		</div>
