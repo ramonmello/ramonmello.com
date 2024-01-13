@@ -18,14 +18,6 @@
 	</section>
 </main>
 
-<!-- <style lang="postcss"> -->
-<!-- 	p :global(span) { -->
-<!-- 		background: var(--Gradient, linear-gradient(270deg, #f8461d 35.42%, #f2b32d 100%)); -->
-<!-- 		background-clip: text; -->
-<!-- 		-webkit-text-fill-color: transparent; -->
-<!-- 	} -->
-<!-- </style> -->
-
 <style lang="postcss">
 	p :global(span) {
 		@apply bg-gradient-to-r from-yellow to-orange bg-clip-text text-transparent;
