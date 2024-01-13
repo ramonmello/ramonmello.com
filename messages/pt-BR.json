@@ -1,5 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Olá Mundo",
-	"greeting": "Hello {name}"
+	"i_am": "Eu sou",
+	"a_software_developer": "<span>desenvolvedor</span><br>de software"
 }
