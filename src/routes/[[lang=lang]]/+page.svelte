@@ -8,7 +8,7 @@
 		<h1 class="text-8xl font-bold md:text-9xl">Ramon</h1>
 		<div class="-mt-4 inline-flex w-full justify-between">
 			<img
-				src="./images/avatar.jpeg"
+				src="./images/avatar.webp"
 				alt=""
 				class="mt-2 h-16 w-16 rounded-full md:mt-0 md:h-24 md:w-24"
 			/>
