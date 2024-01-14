@@ -1,13 +1,13 @@
-<div class="parent">
-	<header>Header</header>
+<div class="pancake-stack">
+	<header></header>
 	<main>
 		<slot />
 	</main>
-	<footer>Footer Content</footer>
+	<footer></footer>
 </div>
 
-<style lang="postcss">
-	.parent {
+<style>
+	.pancake-stack {
 		display: grid;
 		grid-template-rows: auto 1fr auto;
 		min-height: 100vh;
