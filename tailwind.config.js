@@ -1,4 +1,3 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
 /** @type {import('tailwindcss').Config} */
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -13,7 +12,7 @@ export default {
 			white: '#FFFFFF'
 		},
 		fontFamily: {
-			sans: ['Nimbus Sans L', ...defaultTheme.fontFamily.sans]
+			sans: ['Nimbus Sans L', 'Arial']
 		}
 	},
 	plugins: []
