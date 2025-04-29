@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<h1 align="center">
+  ramonmello.com
+</h1>
 
-## Getting Started
 
-First, run the development server:
+https://github.com/user-attachments/assets/8e7b808c-1a99-4986-9ddc-c286b323c639
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+
+
+---
+
+## Visão Geral
+
+Neste repositório você encontrará meu **site de portfólio pessoal** desenvolvido em Next.js, uma **game engine** em TypeScript baseada na arquitetura ECS (Entity-component-system) e um **minigame** inspirado no clássico Asteroids da Atari, criado com essa mesma engine que ainda está em desenvolvimento.
+
+## Estrutura do Projeto
+
+```
+/ (raiz)
+├── app/            # Páginas e rotas (Next.js)
+├── components/     # Componentes React
+├── hooks/          # Custom Hooks React
+├── engine/         # Game Engine 2D em TypeScript (ECS)
+├── games/          # Jogos criados com a Game Engine
+└── tina/           # Configurações e schemas do Tina CMS
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> 🗂️ A pasta `engine/` será extraída para um repositório próprio quando atingir maturidade.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tecnologias Utilizadas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Next.js
+- Tailwind CSS
+- Typescript
+- Tina CMS
+- WebGL
 
-## Learn More
+## Instalação e Desenvolvimento
 
-To learn more about Next.js, take a look at the following resources:
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/ramonmello/ramonmello.com.git
+   cd ramonmello.com
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+4. Acesse em `http://localhost:3000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Como Contribuir
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Este é um projeto pessoal, mas **feedback** e **sugestões** são bem-vindas:
 
-## Deploy on Vercel
+- Abra uma **issue** para discutir ideias ou bugs.
+- Crie um **Pull Request** para propor alterações.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contato
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ramon Mello — [@ramonmello](https://www.linkedin.com/in/ramonmello/) — ramonomello@gmail.com
+
+
