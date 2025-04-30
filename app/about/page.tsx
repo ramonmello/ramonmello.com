@@ -114,7 +114,7 @@ export default function About() {
                   href="#"
                   className="hover:text-neutral-300 transition-colors duration-300"
                 >
-                  About
+                  Sobre
                 </a>
               </li>
               <li>
@@ -122,7 +122,7 @@ export default function About() {
                   href="#projects"
                   className="hover:text-neutral-300 transition-colors duration-300"
                 >
-                  Projects
+                  Projetos
                 </a>
               </li>
               <li>
@@ -130,7 +130,7 @@ export default function About() {
                   href="#experience"
                   className="hover:text-neutral-300 transition-colors duration-300"
                 >
-                  Experience
+                  Experiência
                 </a>
               </li>
             </ul>
