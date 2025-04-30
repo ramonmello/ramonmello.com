@@ -103,9 +103,8 @@ export default function About() {
           <h1 className="font-bold text-5xl">Ramon Mello</h1>
           <p className="text-xl">Front-end Developer</p>
           <p className="mt-4 text-base text-neutral-400">
-            Desenvolvedor front-end com forte afinidade pela área de produto e 7
-            anos de experiência em React, Next.js e MVPs. Busco impacto real por
-            meio de dados e tecnologia.
+            Desenvolvedor Front-end especializado em criar experiências web
+            modernas e interativas.
           </p>
           <nav className="mt-8" aria-label="Main navigation">
             <ul className="space-y-2 uppercase font-lores-12">
@@ -139,20 +138,17 @@ export default function About() {
         <div className="w-full lg:w-7/12 text-neutral-400">
           <section className="text-neutral-400">
             <h2 className="sr-only" id="about">
-              About me
+              Sobre mim
             </h2>
             <p>
-              Sou desenvolvedor front-end especializado em React e Next.js, com
-              mais de sete anos de estrada construindo MVPs que ligam a
-              estratégia de produto à experiência do usuário de forma elegante e
-              eficiente. Ao longo desse percurso colaborei em squads
-              multidisciplinares, atuando como ponte entre design, dados e
-              negócios para transformar insights em interfaces rápidas,
-              acessíveis e escaláveis. Tenho afinidade natural com métricas de
-              produto: gosto de mergulhar em funis, mapear comportamentos e usar
-              experimentação A/B para validar hipóteses e guiar decisões
-              técnicas, sempre com foco em gerar valor tangível para quem usa a
-              solução.
+              Há mais de sete anos, projeto e desenvolvo interfaces que conectam
+              estratégias de produto à experiência do usuário. Já liderei e
+              colaborei com squads multidisciplinares, atuando como elo entre
+              design, dados e negócios para converter insights em soluções
+              rápidas, acessíveis e escaláveis. Mais do que escrever código,
+              estudo a jornada e o comportamento dos usuários para validar
+              hipóteses e embasar decisões técnicas, garantindo valor real para
+              quem usa as soluções desenvolvidas.
             </p>
           </section>
           <section id="projects" className="text-neutral-400">
