@@ -4,14 +4,14 @@ import { Layout } from "@/components/layout";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ramon Mello | Front-end Developer",
+  title: "Ramon Mello | Full-Stack Developer",
   description:
-    "Desenvolvedor Front-end especializado em criar experiências web modernas e interativas.",
+    "Desenvolvedor Full-Stack especializado em criar experiências web modernas e interativas.",
   metadataBase: new URL("https://ramonmello.com"),
   openGraph: {
-    title: "Ramon Mello | Front-end Developer",
+    title: "Ramon Mello | Full-Stack Developer",
     description:
-      "Desenvolvedor Front-end especializado em criar experiências web modernas e interativas.",
+      "Desenvolvedor Full-Stack especializado em criar experiências web modernas e interativas.",
     url: "https://ramonmello.com",
     siteName: "Ramon Mello",
     images: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Ramon Mello - Front-end Developer",
+        alt: "Ramon Mello - Full-Stack Developer",
       },
     ],
     locale: "pt_BR",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ramon Mello | Front-end Developer",
+    title: "Ramon Mello | Full-Stack Developer",
     description:
-      "Desenvolvedor Front-end especializado em criar experiências web modernas e interativas.",
+      "Desenvolvedor Full-Stack especializado em criar experiências web modernas e interativas.",
     images: ["/og-image.jpg"],
   },
   robots: {

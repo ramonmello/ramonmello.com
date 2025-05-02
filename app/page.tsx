@@ -60,7 +60,7 @@ export default function Home() {
           <h1 className="text-8xl font-bold md:text-9xl">Mello</h1>
         </div>
         <span className="font-lores-12 self-end text-lg w-full text-end mr-2">
-          * Front-end Developer
+          * Full-Stack Developer
         </span>
       </div>
     </>

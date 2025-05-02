@@ -101,9 +101,9 @@ export default function About() {
             sizes="(max-width: 768px) 100vw, 250px"
           />
           <h1 className="font-bold text-5xl">Ramon Mello</h1>
-          <p className="text-xl">Front-end Developer</p>
+          <p className="text-xl">Full-Stack Developer</p>
           <p className="mt-4 text-base text-neutral-400">
-            Desenvolvedor Front-end especializado em criar experiências web
+            Desenvolvedor Full-Stack especializado em criar experiências web
             modernas e interativas.
           </p>
           <nav className="mt-8" aria-label="Main navigation">
