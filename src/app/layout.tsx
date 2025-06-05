@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { StarCanvas } from "@/shared/components/star-canvas";
-import { Layout } from "@/shared/components/layout";
+import { StarCanvas } from "@shared/components/star-canvas";
+import { Layout } from "@shared/components/layout";
 import "./globals.css";
 
 export const metadata: Metadata = {

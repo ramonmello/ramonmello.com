@@ -1,5 +1,6 @@
-import { Header } from "@/shared/components/header";
-import { Footer } from "@/shared/components/footer";
+import { Header } from "./header";
+import { Footer } from "./footer";
+
 export function Layout({
   children,
 }: Readonly<{

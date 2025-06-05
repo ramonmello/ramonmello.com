@@ -1,5 +1,5 @@
-import { Component } from "@/features/engine/core/base/Component";
-import { Entity } from "@/features/engine/core/base/Entity";
+import { Component } from "@engine/core/base/Component";
+import { Entity } from "@engine/core/base/Entity";
 
 export class ProjectileComponent extends Component {
   static readonly TYPE = "projectile";

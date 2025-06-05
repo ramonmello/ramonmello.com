@@ -1,10 +1,10 @@
-import { Entity } from "@/features/engine/core/base/Entity";
-import { TransformComponent } from "@/features/engine/core/components/TransformComponent";
-import { RenderComponent } from "@/features/engine/core/components/RenderComponent";
-import { PhysicsComponent } from "@/features/engine/core/components/PhysicsComponent";
-import { ColliderComponent } from "@/features/engine/core/components/ColliderComponent";
+import { Entity } from "@engine/core/base/Entity";
+import { TransformComponent } from "@engine/core/components/TransformComponent";
+import { RenderComponent } from "@engine/core/components/RenderComponent";
+import { PhysicsComponent } from "@engine/core/components/PhysicsComponent";
+import { ColliderComponent } from "@engine/core/components/ColliderComponent";
 import { ShipComponent } from "../components/ShipComponent";
-import { getWebGLContext } from "@/features/engine/core/rendering/Context";
+import { getWebGLContext } from "@engine/core/rendering/Context";
 
 export function createShipEntity(): Entity {
   const { canvas } = getWebGLContext();

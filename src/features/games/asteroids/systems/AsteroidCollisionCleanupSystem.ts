@@ -1,17 +1,17 @@
-import { System } from "@/features/engine/core/base/System";
-import { World } from "@/features/engine/core/base/World";
-import { Entity } from "@/features/engine/core/base/Entity";
+import { System } from "@engine/core/base/System";
+import { World } from "@engine/core/base/World";
+import { Entity } from "@engine/core/base/Entity";
 import {
   COLLISION_EVENTS,
   WORLD_EVENTS,
   PROJECTILE_EVENTS,
   PLAYER_EVENTS,
   ENTITY_EVENTS,
-} from "@/features/engine/core/messaging/MessageTypes";
+} from "@engine/core/messaging/MessageTypes";
 import { ProjectileComponent } from "../components/ProjectileComponent";
 import { ShipComponent } from "../components/ShipComponent";
-import { MessageData } from "@/features/engine/core/messaging/MessageBus";
-import { TransformComponent } from "@/features/engine/core/components/TransformComponent";
+import { MessageData } from "@engine/core/messaging/MessageBus";
+import { TransformComponent } from "@engine/core/components/TransformComponent";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
 export class AsteroidCollisionSystem extends System {

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { version } from "@/../package.json";
+import { version } from "@/package.json";
 
 export function HomeFooter() {
   return (

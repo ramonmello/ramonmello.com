@@ -1,5 +1,5 @@
-import ExternalLinkIcon from "@/shared/components/icons/ExternalLinkIcon";
-import { cn } from "@/shared/utils/cn";
+import ExternalLinkIcon from "@shared/components/icons/ExternalLinkIcon";
+import { cn } from "@shared/utils/cn";
 
 const projects = [
   {

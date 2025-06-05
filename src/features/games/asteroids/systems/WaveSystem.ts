@@ -1,12 +1,12 @@
-import { System } from "@/features/engine/core/base/System";
-import { Entity } from "@/features/engine/core/base/Entity";
-import { World } from "@/features/engine/core/base/World";
+import { System } from "@engine/core/base/System";
+import { Entity } from "@engine/core/base/Entity";
+import { World } from "@engine/core/base/World";
 import { createAsteroidEntity } from "../entities/AsteroidEntity";
 import {
   GAME_EVENTS,
   ENTITY_EVENTS,
-} from "@/features/engine/core/messaging/MessageTypes";
-import { MessageData } from "@/features/engine/core/messaging/MessageBus";
+} from "@engine/core/messaging/MessageTypes";
+import { MessageData } from "@engine/core/messaging/MessageBus";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
 export class WaveSystem extends System {

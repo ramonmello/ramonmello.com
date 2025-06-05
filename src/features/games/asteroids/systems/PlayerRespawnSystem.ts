@@ -1,9 +1,9 @@
 // engine/core/systems/PlayerRespawnSystem.ts
-import { System } from "@/features/engine/core/base/System";
-import { MessageBus } from "@/features/engine/core/messaging/MessageBus";
-import { PLAYER_EVENTS } from "@/features/engine/core/messaging/MessageTypes";
-import { World } from "@/features/engine/core/base/World";
-import { createShipEntity } from "@/features/games/asteroids/entities/ShipEntity"; // sua factory atual
+import { System } from "@engine/core/base/System";
+import { MessageBus } from "@engine/core/messaging/MessageBus";
+import { PLAYER_EVENTS } from "@engine/core/messaging/MessageTypes";
+import { World } from "@engine/core/base/World";
+import { createShipEntity } from "@games/asteroids/entities/ShipEntity";
 
 export class PlayerRespawnSystem extends System {
   readonly componentTypes: string[] = []; // não processa entidades

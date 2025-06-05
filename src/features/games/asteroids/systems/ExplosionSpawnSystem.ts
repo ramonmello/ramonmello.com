@@ -1,14 +1,14 @@
-import { System } from "@/features/engine/core/base/System";
-import { World } from "@/features/engine/core/base/World";
-import { Entity } from "@/features/engine/core/base/Entity";
-import { TransformComponent } from "@/features/engine/core/components/TransformComponent";
-import { ParticleEmitterComponent } from "@/features/engine/core/components/ParticleEmitterComponent";
+import { System } from "@engine/core/base/System";
+import { World } from "@engine/core/base/World";
+import { Entity } from "@engine/core/base/Entity";
+import { TransformComponent } from "@engine/core/components/TransformComponent";
+import { ParticleEmitterComponent } from "@engine/core/components/ParticleEmitterComponent";
 import {
   PLAYER_EVENTS,
   PROJECTILE_EVENTS,
-} from "@/features/engine/core/messaging/MessageTypes";
-import { MessageData } from "@/features/engine/core/messaging/MessageBus";
-import { EmitterConfig } from "@/features/engine/core/rendering/particles";
+} from "@engine/core/messaging/MessageTypes";
+import { MessageData } from "@engine/core/messaging/MessageBus";
+import { EmitterConfig } from "@engine/core/rendering/particles";
 
 const EXPLOSION_SMALL: EmitterConfig = {
   num: 80,
