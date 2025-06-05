@@ -4,7 +4,7 @@ import { Collection } from "tinacms";
 export const pagesCollection: Collection = {
   label: "Pages",
   name: "page",
-  path: "content/blocksPages",
+  path: "content/pages",
   format: "json",
   templates: [HomePageTemplate],
 };
