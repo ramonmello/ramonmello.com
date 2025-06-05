@@ -42,6 +42,7 @@ export class ShipComponent extends Component {
     this.invincibilityTime = time;
   }
 
+  // TODO: review this function
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(deltaTime: number): void {
     if (this.lastShot > 0) {
