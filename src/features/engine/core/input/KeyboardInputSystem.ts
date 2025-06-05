@@ -1,4 +1,4 @@
-import type { KeyboardHandler } from "@/features/games/hooks/useKeyboard";
+import type { KeyboardHandler } from "@games/hooks/useKeyboard";
 import { InputSystem } from "./InputSystem";
 
 export class KeyboardInputSystem implements InputSystem {

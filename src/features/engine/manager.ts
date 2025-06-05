@@ -3,7 +3,7 @@ import { InputSystem } from "./core/input/InputSystem";
 import { KeyboardInputSystem } from "./core/input/KeyboardInputSystem";
 import { MessageBus } from "./core/messaging/MessageBus";
 import { initWebGLContext, clearWebGLContext } from "./core/rendering/Context";
-import type { KeyboardHandler } from "@/features/games/hooks/useKeyboard";
+import type { KeyboardHandler } from "@games/hooks/useKeyboard";
 
 export class Manager {
   private static instance: Manager;
