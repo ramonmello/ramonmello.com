@@ -58,9 +58,9 @@ export function Projects() {
             >
               <h3 className="text-xl font-medium text-white flex items-center">
                 {project.title}
-                {project?.link && (
+                {/* {project?.link && (
                   <ExternalLinkIcon className="ml-2 group-hover:ml-3 group-hover:size-5 transition-all duration-300 ease-in-out" />
-                )}
+                )} */}
               </h3>
               <p className="mt-2">{project.description}</p>
               <div className="flex gap-2 mt-4">
