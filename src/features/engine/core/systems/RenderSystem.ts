@@ -58,7 +58,7 @@ export class RenderSystem extends System {
       );
       const render = entity.getComponent<RenderComponent>(RenderComponent.TYPE);
 
-      if (!transform || !render) return;
+      if (!transform || !render || !locs) return;
 
       gl.useProgram(locs.program);
 
