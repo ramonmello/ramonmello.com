@@ -8,9 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.3(@types/react@19.1.6)(react@19.1.0)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      lucide-react:
+        specifier: ^0.513.0
+        version: 0.513.0(react@19.1.0)
       next:
         specifier: 15.3.3
         version: 15.3.3(@babel/core@7.27.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -57,6 +66,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.4
         version: 4.1.8
+      tw-animate-css:
+        specifier: ^1.3.4
+        version: 1.3.4
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -581,8 +593,8 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
 
-  '@graphql-codegen/plugin-helpers@5.1.0':
-    resolution: {integrity: sha512-Y7cwEAkprbTKzVIe436TIw4w03jorsMruvCvu0HJkavaKMQbWY+lQ1RIuROgszDbxAyM35twB5/sUvYG5oW+yg==}
+  '@graphql-codegen/plugin-helpers@5.1.1':
+    resolution: {integrity: sha512-28GHODK2HY1NhdyRcPP3sCz0Kqxyfiz7boIZ8qIxFYmpLYnlDgiYok5fhFLVSZihyOpCs4Fa37gVHf/Q4I2FEg==}
     engines: {node: '>=16'}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
@@ -4397,6 +4409,11 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
+  lucide-react@0.513.0:
+    resolution: {integrity: sha512-CJZKq2g8Y8yN4Aq002GahSXbG2JpFv9kXwyiOAMvUBv7pxeOFHUWKB0mO7MiY4ZVFCV4aNjv2BJFq/z3DgKPQg==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
 
@@ -5884,6 +5901,9 @@ packages:
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
+  tw-animate-css@1.3.4:
+    resolution: {integrity: sha512-dd1Ht6/YQHcNbq0znIT6dG8uhO7Ce+VIIhZUhjsryXsMPJQz3bZg7Q2eNzLwipb25bRZslGb2myio5mScd1TFg==}
+
   typanion@3.13.0:
     resolution: {integrity: sha512-AkZMjMIW8MGeQwBxu1bixzu/2Zk7rH6ILrI/9zBoW0sAiVaWwHjXSnmPBomfY2t7tSG6m5bIE+OYYyyuGnFVHA==}
 
@@ -6759,7 +6779,7 @@ snapshots:
       lodash: 4.17.21
       tslib: 2.4.1
 
-  '@graphql-codegen/plugin-helpers@5.1.0(graphql@15.8.0)':
+  '@graphql-codegen/plugin-helpers@5.1.1(graphql@15.8.0)':
     dependencies:
       '@graphql-tools/utils': 10.8.6(graphql@15.8.0)
       change-case-all: 1.0.15
@@ -6771,14 +6791,14 @@ snapshots:
 
   '@graphql-codegen/schema-ast@4.1.0(graphql@15.8.0)':
     dependencies:
-      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@15.8.0)
+      '@graphql-codegen/plugin-helpers': 5.1.1(graphql@15.8.0)
       '@graphql-tools/utils': 10.8.6(graphql@15.8.0)
       graphql: 15.8.0
       tslib: 2.6.2
 
   '@graphql-codegen/typescript-operations@4.6.1(graphql@15.8.0)':
     dependencies:
-      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@15.8.0)
+      '@graphql-codegen/plugin-helpers': 5.1.1(graphql@15.8.0)
       '@graphql-codegen/typescript': 4.1.6(graphql@15.8.0)
       '@graphql-codegen/visitor-plugin-common': 5.8.0(graphql@15.8.0)
       auto-bind: 4.0.0
@@ -6789,7 +6809,7 @@ snapshots:
 
   '@graphql-codegen/typescript@4.1.6(graphql@15.8.0)':
     dependencies:
-      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@15.8.0)
+      '@graphql-codegen/plugin-helpers': 5.1.1(graphql@15.8.0)
       '@graphql-codegen/schema-ast': 4.1.0(graphql@15.8.0)
       '@graphql-codegen/visitor-plugin-common': 5.8.0(graphql@15.8.0)
       auto-bind: 4.0.0
@@ -6800,7 +6820,7 @@ snapshots:
 
   '@graphql-codegen/visitor-plugin-common@4.1.2(graphql@15.8.0)':
     dependencies:
-      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@15.8.0)
+      '@graphql-codegen/plugin-helpers': 5.1.1(graphql@15.8.0)
       '@graphql-tools/optimize': 2.0.0(graphql@15.8.0)
       '@graphql-tools/relay-operation-optimizer': 7.0.19(graphql@15.8.0)
       '@graphql-tools/utils': 10.8.6(graphql@15.8.0)
@@ -6816,7 +6836,7 @@ snapshots:
 
   '@graphql-codegen/visitor-plugin-common@5.8.0(graphql@15.8.0)':
     dependencies:
-      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@15.8.0)
+      '@graphql-codegen/plugin-helpers': 5.1.1(graphql@15.8.0)
       '@graphql-tools/optimize': 2.0.0(graphql@15.8.0)
       '@graphql-tools/relay-operation-optimizer': 7.0.19(graphql@15.8.0)
       '@graphql-tools/utils': 10.8.6(graphql@15.8.0)
@@ -7887,7 +7907,7 @@ snapshots:
   '@tinacms/cli@1.9.8(@codemirror/language@6.0.0)(@types/node@22.15.29)(@types/react-dom@19.1.5(@types/react@19.1.6))(@types/react@19.1.6)(abstract-level@1.0.4)(immer@10.1.1)(lightningcss@1.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rollup@3.29.5)(scheduler@0.26.0)(sucrase@3.35.0)':
     dependencies:
       '@graphql-codegen/core': 2.6.8(graphql@15.8.0)
-      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@15.8.0)
+      '@graphql-codegen/plugin-helpers': 5.1.1(graphql@15.8.0)
       '@graphql-codegen/typescript': 4.1.6(graphql@15.8.0)
       '@graphql-codegen/typescript-operations': 4.6.1(graphql@15.8.0)
       '@graphql-codegen/visitor-plugin-common': 4.1.2(graphql@15.8.0)
@@ -11159,6 +11179,10 @@ snapshots:
     dependencies:
       react: 19.1.0
 
+  lucide-react@0.513.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
   lunr@2.3.9: {}
 
   magic-string@0.27.0:
@@ -13203,6 +13227,8 @@ snapshots:
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
+
+  tw-animate-css@1.3.4: {}
 
   typanion@3.13.0: {}
 

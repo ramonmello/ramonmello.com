@@ -50,7 +50,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className="antialiased">
+      <body className="antialiased dark">
         <StarCanvas />
         <Layout>{children}</Layout>
       </body>
