@@ -1,5 +1,6 @@
 import ExternalLinkIcon from "@shared/components/icons/ExternalLinkIcon";
 import { cn } from "@shared/utils/cn";
+import { Tag } from "./Tag";
 
 const projects = [
   {
@@ -65,12 +66,7 @@ export function Projects() {
               <p className="mt-2">{project.description}</p>
               <div className="flex gap-2 mt-4">
                 {project.technologies.map((tech) => (
-                  <span
-                    key={tech}
-                    className="text-sm bg-neutral-800 px-2 py-1 rounded"
-                  >
-                    {tech}
-                  </span>
+                  <Tag key={tech} label={tech} />
                 ))}
               </div>
             </article>

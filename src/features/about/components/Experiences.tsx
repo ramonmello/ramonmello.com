@@ -1,3 +1,5 @@
+import { Tag } from "./Tag";
+
 const experience = [
   {
     title: "Front-end Developer",
@@ -66,12 +68,7 @@ export function Experiences() {
           <p className="mt-2">{job.description}</p>
           <div className="flex gap-2 mt-4">
             {job.technologies.map((tech) => (
-              <span
-                key={tech}
-                className="text-sm bg-neutral-800 px-2 py-1 rounded"
-              >
-                {tech}
-              </span>
+              <Tag key={tech} label={tech} />
             ))}
           </div>
         </div>
