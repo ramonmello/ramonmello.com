@@ -1,5 +1,21 @@
+import { headers } from "next/headers";
+import dynamic from "next/dynamic";
+import { client } from "@/tina/__generated__/client";
 import { HomePage } from "@home/pages/HomePage";
 
-export default function Home() {
-  return <HomePage />;
+const HomePagePreview = dynamic(() => import("@home/pages/HomePagePreview"));
+
+export default async function Home() {
+  const headersList = await headers();
+  const secFetchDest = headersList.get("sec-fetch-dest");
+
+  const { data, query, variables } = await client.queries.page({
+    relativePath: "home.json",
+  });
+
+  if (secFetchDest === "iframe") {
+    return <HomePagePreview data={data} query={query} variables={variables} />;
+  }
+
+  return <HomePage data={data.page} />;
 }

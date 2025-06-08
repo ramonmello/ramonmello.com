@@ -1,5 +1,20 @@
-import AboutPage from "@about/pages/AboutPage";
+import { headers } from "next/headers";
+import dynamic from "next/dynamic";
+import { client } from "@/tina/__generated__/client";
+import { AboutPage } from "@about/pages/AboutPage";
 
-export default function About() {
-  return <AboutPage />;
+const AboutPagePreview = dynamic(() => import("@about/pages/AboutPagePreview"));
+export default async function About() {
+  const headersList = await headers();
+  const secFetchDest = headersList.get("sec-fetch-dest");
+
+  const { data, query, variables } = await client.queries.page({
+    relativePath: "about.json",
+  });
+
+  if (secFetchDest === "iframe") {
+    return <AboutPagePreview data={data} query={query} variables={variables} />;
+  }
+
+  return <AboutPage data={data.page} />;
 }

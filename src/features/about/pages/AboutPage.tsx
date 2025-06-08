@@ -2,7 +2,7 @@ import { Sidebar } from "@about/components/Sidebar";
 import { Projects } from "@about/components/Projects";
 import { Experiences } from "@about/components/Experiences";
 
-export default function AboutPage() {
+export function AboutPage({ data }: { data: any }) {
   return (
     <div className="max-w-6xl scroll-smooth mt-16">
       <div className="lg:flex lg:justify-between lg:gap-4">

@@ -1,4 +1,5 @@
 import { HomePageTemplate } from "@home/pages/HomePage.template";
+import { AboutPageTemplate } from "@about/pages/AboutPage.template";
 import { Collection } from "tinacms";
 
 export const pagesCollection: Collection = {
@@ -6,5 +7,20 @@ export const pagesCollection: Collection = {
   name: "page",
   path: "content/pages",
   format: "json",
-  templates: [HomePageTemplate],
+  ui: {
+    router: ({ document, collection }) => {
+      debugger;
+      const fullPath = document._sys.path;
+      const basePath = `${collection.path}`;
+      const relativePath = fullPath
+        .substring(basePath.length)
+        .replace(/\.[^/.]+$/, "");
+
+      if (relativePath === "/home") {
+        return "/";
+      }
+      return `${relativePath}`;
+    },
+  },
+  templates: [HomePageTemplate, AboutPageTemplate],
 };
