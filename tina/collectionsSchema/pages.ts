@@ -9,7 +9,6 @@ export const pagesCollection: Collection = {
   format: "json",
   ui: {
     router: ({ document, collection }) => {
-      debugger;
       const fullPath = document._sys.path;
       const basePath = `${collection.path}`;
       const relativePath = fullPath
