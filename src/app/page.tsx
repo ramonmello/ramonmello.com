@@ -14,8 +14,6 @@ export default async function Home() {
     relativePath: "home.json",
   });
 
-  console.log("TESTE ###############");
-
   if (isInIframe) {
     return <HomePagePreview data={data} query={query} variables={variables} />;
   }
