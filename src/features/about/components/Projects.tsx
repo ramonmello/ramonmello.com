@@ -46,7 +46,7 @@ const projects = [
 export function Projects() {
   return (
     <section id="projects" className="text-neutral-400">
-      <h2 className="text-2xl font-bold text-white pt-14 mb-8">Projetos</h2>
+      <h2 className="text-2xl font-bold text-white mb-8">Projetos</h2>
       <div className="mt-8 flex flex-col gap-12">
         {projects.map((project) => (
           <a key={project.key} href={project.link} target="_blank">

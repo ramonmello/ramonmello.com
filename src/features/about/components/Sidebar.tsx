@@ -18,39 +18,48 @@ export function Sidebar() {
         sizes="(max-width: 768px) 100vw, 250px"
       />
       <h1 className="font-bold text-5xl">Ramon Mello</h1>
-      <p className="text-xl">Full-Stack Developer</p>
-      <p className="mt-4 text-base text-neutral-400">
-        Desenvolvedor Full-Stack especializado em criar experiências web
-        modernas e interativas.
+      <p className="text-xl font-light">Full-Stack Developer</p>
+      <p className="mt-4 text-base max-w-md text-neutral-400">
+        Há mais de sete anos, projeto e desenvolvo interfaces que conectam
+        estratégias de produto à experiência do usuário. Já liderei e colaborei
+        com squads multidisciplinares, atuando como elo entre design, dados e
+        negócios para converter insights em soluções rápidas, acessíveis e
+        escaláveis. Mais do que escrever código, estudo a jornada e o
+        comportamento dos usuários para validar hipóteses e embasar decisões
+        técnicas, garantindo valor real para quem usa as soluções desenvolvidas.
       </p>
-      <nav className="mt-8" aria-label="Main navigation">
-        <ul className="space-y-2 uppercase font-lores-12">
-          <li>
-            <a
-              href="#"
-              className="hover:text-neutral-300 transition-colors duration-300"
-            >
-              Sobre
-            </a>
-          </li>
-          <li>
-            <a
-              href="#projects"
-              className="hover:text-neutral-300 transition-colors duration-300"
-            >
-              Projetos
-            </a>
-          </li>
-          <li>
-            <a
-              href="#experience"
-              className="hover:text-neutral-300 transition-colors duration-300"
-            >
-              Experiência
-            </a>
-          </li>
-        </ul>
-      </nav>
+
+      <div className="flex gap-4 mt-4">
+        <a
+          className="flex"
+          href="https://github.com/ramonmello"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            className="text-amber-200 fill-amber-200"
+            src="/github-icon.svg"
+            alt="File icon"
+            width={24}
+            height={24}
+          />
+        </a>
+        <a
+          className="flex"
+          href="https://www.linkedin.com/in/ramonmello/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/linkedin-icon.svg"
+            alt="File icon"
+            width={24}
+            height={24}
+          />
+        </a>
+      </div>
     </div>
   );
 }
