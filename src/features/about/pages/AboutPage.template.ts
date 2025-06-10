@@ -1,4 +1,5 @@
 import { Template } from "tinacms";
+import { tagsReference } from "@/tina/sharedFields/tagsReference";
 
 export const AboutPageTemplate: Template = {
   label: "About",
@@ -17,21 +18,35 @@ export const AboutPageTemplate: Template = {
       name: "experiences",
       list: true,
       fields: [
-        { type: "string", name: "title", label: "Título" },
-        { type: "string", name: "company", label: "Empresa" },
+        { type: "string", name: "role", label: "Role" },
+        { type: "string", name: "company", label: "Company" },
+        {
+          type: "datetime",
+          name: "startDate",
+          label: "Start Date",
+          ui: { component: "date", dateFormat: "MM/YYYY" },
+        },
+        {
+          type: "boolean",
+          name: "currentJob",
+          label: "Current Job",
+        },
+        {
+          type: "datetime",
+          name: "endDate",
+          label: "End Date",
+          ui: {
+            component: "date",
+            dateFormat: "MM/YYYY",
+          },
+        },
         {
           type: "string",
-          name: "description",
-          label: "Descrição",
+          name: "contributions",
+          label: "Contributions",
           ui: { component: "textarea" },
         },
-        { type: "string", name: "startDate", label: "Data de início" },
-        { type: "string", name: "endDate", label: "Data de término" },
-        {
-          type: "string",
-          name: "technologies",
-          label: "Tecnologias (separadas por vírgula)",
-        },
+        tagsReference,
       ],
     },
     {
@@ -42,8 +57,8 @@ export const AboutPageTemplate: Template = {
       fields: [
         {
           type: "string",
-          name: "title",
-          label: "Título",
+          name: "name",
+          label: "Name",
         },
         {
           type: "string",
@@ -52,30 +67,11 @@ export const AboutPageTemplate: Template = {
         },
         {
           type: "string",
-          name: "description",
-          label: "Descrição",
+          name: "summary",
+          label: "Summary",
           ui: { component: "textarea" },
         },
-        {
-          name: "tags",
-          label: "Tags",
-          list: true,
-          type: "object",
-          ui: {
-            itemProps: (item) => {
-              console.log("TESTE ###############", item);
-              return { label: "🗂️ " + item?.tag?.label };
-            },
-          },
-          fields: [
-            {
-              type: "reference",
-              name: "tag",
-              label: "Tag",
-              collections: ["tag"],
-            },
-          ],
-        },
+        tagsReference,
       ],
     },
   ],

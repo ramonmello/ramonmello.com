@@ -1,5 +1,13 @@
 {
   "title": "About Page",
   "description": "",
+  "experiences": [
+    {
+      "currentJob": false
+    }
+  ],
+  "projects": [
+    {}
+  ],
   "_template": "about"
 }
