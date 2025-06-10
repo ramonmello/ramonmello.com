@@ -8,12 +8,15 @@ const HomePagePreview = dynamic(() => import("@home/pages/HomePagePreview"));
 export default async function Home() {
   const headersList = await headers();
   const secFetchDest = headersList.get("sec-fetch-dest");
+  const isInIframe = secFetchDest === "iframe";
 
   const { data, query, variables } = await client.queries.page({
     relativePath: "home.json",
   });
 
-  if (secFetchDest === "iframe") {
+  console.log("TESTE ###############");
+
+  if (isInIframe) {
     return <HomePagePreview data={data} query={query} variables={variables} />;
   }
 
