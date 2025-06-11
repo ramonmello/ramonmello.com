@@ -18,5 +18,11 @@ export default async function Home() {
     return <HomePagePreview data={data} query={query} variables={variables} />;
   }
 
-  return <HomePage data={data.page} />;
+  if (data.page.__typename !== "PageHome") {
+    throw new Error(
+      `The homepage (home.json) needs to be of type "PageHome", but it is of type "${data.page.__typename}". Check the content in TinaCMS.`
+    );
+  }
+
+  return <HomePage {...data.page} />;
 }

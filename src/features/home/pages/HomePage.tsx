@@ -3,7 +3,15 @@ import { tinaField } from "tinacms/dist/react";
 import { GameWrapper } from "../components/GameWrapper";
 import { GameControlsGuide } from "../components/GameControlsGuide";
 
-export function HomePage({ data }: { data: any }) {
+export type HomePageProps = {
+  firstName: string;
+  lastName: string;
+  role: string;
+  picture: string;
+};
+
+export function HomePage(data: HomePageProps) {
+  const { firstName, lastName, role, picture } = data;
   return (
     <>
       <GameWrapper />
@@ -12,13 +20,13 @@ export function HomePage({ data }: { data: any }) {
           className="text-8xl font-bold md:text-9xl leading-20"
           data-tina-field={tinaField(data, "firstName")}
         >
-          {data.firstName}
+          {firstName}
         </h1>
         <div className="inline-flex items-center">
           <Image
             className="rounded-full object-cover h-24 -ml-1"
             aria-hidden
-            src={data.picture}
+            src={picture}
             alt="Fotografia Ramon Mello"
             width={96}
             height={96}
@@ -27,14 +35,14 @@ export function HomePage({ data }: { data: any }) {
             className="text-8xl font-bold md:text-9xl"
             data-tina-field={tinaField(data, "lastName")}
           >
-            {data.lastName}
+            {lastName}
           </h1>
         </div>
         <span
           className="font-lores-12 self-end text-lg w-full text-end mr-2"
           data-tina-field={tinaField(data, "role")}
         >
-          {data.role}
+          {role}
         </span>
       </div>
       <GameControlsGuide />

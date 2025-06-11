@@ -1,23 +1,24 @@
 "use client";
 
-import { useTina } from "tinacms/dist/react";
-import { HomePage } from "./HomePage";
+import { HomePage, type HomePageProps } from "./HomePage";
+import { TinaClient } from "@shared/components/tina-client";
+
+type TinaData = {
+  page: HomePageProps;
+};
 
 type Props = {
   query: string;
-  data: any;
+  data: { page: object };
   variables: {
     relativePath: string;
   };
 };
 
 export default function HomePagePreview(props: Props) {
-  const { query, variables, data } = props;
-  const { data: liveData } = useTina({
-    query,
-    variables,
-    data,
-  });
+  const HomePageWrapper = (tinaProps: { data: TinaData }) => {
+    return <HomePage {...tinaProps.data.page} />;
+  };
 
-  return <HomePage data={liveData.page} />;
+  return <TinaClient props={props} Component={HomePageWrapper} />;
 }
