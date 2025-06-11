@@ -3,22 +3,25 @@
 import { useTina } from "tinacms/dist/react";
 import React from "react";
 
-export type UseTinaProps = {
+export type UseTinaProps<T extends object> = {
   query: string;
   variables: {
     relativePath: string;
   };
   data: {
-    page: object;
+    page: T;
   };
 };
 
-export type TinaClientProps = {
-  props: UseTinaProps;
-  Component: React.FC<any>;
+export type TinaClientProps<T extends object> = {
+  props: UseTinaProps<T>;
+  Component: React.FC<T>;
 };
 
-export function TinaClient({ props, Component }: TinaClientProps) {
+export function TinaClient<T extends object>({
+  props,
+  Component,
+}: TinaClientProps<T>) {
   const { data } = useTina({
     query: props.query,
     variables: props.variables,

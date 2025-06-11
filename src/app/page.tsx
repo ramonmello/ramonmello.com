@@ -21,7 +21,13 @@ export default async function Home() {
   }
 
   if (isInIframe) {
-    return <HomePagePreview data={data} query={query} variables={variables} />;
+    return (
+      <HomePagePreview
+        data={{ page: data.page }}
+        query={query}
+        variables={variables}
+      />
+    );
   }
 
   return <HomePage {...data.page} />;
