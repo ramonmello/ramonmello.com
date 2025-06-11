@@ -14,14 +14,14 @@ export default async function Home() {
     relativePath: "home.json",
   });
 
-  if (isInIframe) {
-    return <HomePagePreview data={data} query={query} variables={variables} />;
-  }
-
   if (data.page.__typename !== "PageHome") {
     throw new Error(
       `The homepage (home.json) needs to be of type "PageHome", but it is of type "${data.page.__typename}". Check the content in TinaCMS.`
     );
+  }
+
+  if (isInIframe) {
+    return <HomePagePreview data={data} query={query} variables={variables} />;
   }
 
   return <HomePage {...data.page} />;
