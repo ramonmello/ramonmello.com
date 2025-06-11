@@ -8,21 +8,25 @@ export const HomePageTemplate: Template = {
       type: "string",
       label: "First Name",
       name: "firstName",
+      required: true,
     },
     {
       type: "string",
       label: "Last Name",
       name: "lastName",
+      required: true,
     },
     {
       type: "string",
       label: "Role",
       name: "role",
+      required: true,
     },
     {
       type: "image",
       label: "Picture",
       name: "picture",
+      required: true,
     },
   ],
 };
