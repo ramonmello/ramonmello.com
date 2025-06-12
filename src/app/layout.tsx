@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { StarCanvas } from "@shared/components/star-canvas";
+import { TinaEditListener } from "@shared/components/TinaEditListener";
 import { Layout } from "@shared/components/layout";
 import "./globals.css";
 
@@ -54,6 +55,7 @@ export default function RootLayout({
         <StarCanvas />
         <Layout>{children}</Layout>
       </body>
+      <TinaEditListener />
     </html>
   );
 }

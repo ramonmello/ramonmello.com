@@ -1,14 +1,13 @@
-import { headers } from "next/headers";
+import { draftMode } from "next/headers";
 import dynamic from "next/dynamic";
 import { client } from "@/tina/__generated__/client";
+
 import { HomePage } from "@home/pages/HomePage";
 
 const HomePagePreview = dynamic(() => import("@home/pages/HomePagePreview"));
 
 export default async function Home() {
-  const headersList = await headers();
-  const secFetchDest = headersList.get("sec-fetch-dest");
-  const isInIframe = secFetchDest === "iframe";
+  const draft = await draftMode();
 
   const { data, query, variables } = await client.queries.page({
     relativePath: "home.json",
@@ -20,7 +19,7 @@ export default async function Home() {
     );
   }
 
-  if (isInIframe) {
+  if (draft.isEnabled) {
     return (
       <HomePagePreview
         data={{ page: data.page }}
