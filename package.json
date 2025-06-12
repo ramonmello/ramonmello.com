@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "TINA_PUBLIC_IS_LOCAL=true tinacms dev -c \"next dev --turbopack\"",
     "build": "tinacms build && next build",
+    "build:analyze": "tinacms build && ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@next/bundle-analyzer": "^15.3.3",
     "@tailwindcss/postcss": "^4.1.4",
     "@tinacms/cli": "^1.9.8",
     "@types/node": "^22.15.2",
