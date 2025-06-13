@@ -3,15 +3,16 @@ import { tinaField } from "tinacms/dist/react";
 import { GameWrapper } from "../components/GameWrapper";
 import { GameControlsGuide } from "../components/GameControlsGuide";
 
-export type HomePageProps = {
+export type HomeVM = {
   firstName: string;
   lastName: string;
   role: string;
   picture: string;
 };
 
-export function HomePage(data: HomePageProps) {
+export function HomePage(data: HomeVM) {
   const { firstName, lastName, role, picture } = data;
+
   return (
     <>
       <GameWrapper />
@@ -25,6 +26,7 @@ export function HomePage(data: HomePageProps) {
         <div className="inline-flex items-center">
           <Image
             className="rounded-full object-cover h-24 -ml-1"
+            data-tina-field={tinaField(data, "picture")}
             aria-hidden
             src={picture}
             alt="Fotografia Ramon Mello"
