@@ -1,7 +1,7 @@
 import { draftMode } from "next/headers";
 import dynamic from "next/dynamic";
 import { mapAbout } from "@about/mapper";
-import { cms } from "@/lib/cms/client";
+import { cms } from "@/src/libs/cms/client";
 import { AboutPage } from "@about/pages/AboutPage";
 
 const AboutPagePreview = dynamic(() => import("@about/pages/AboutPagePreview"));

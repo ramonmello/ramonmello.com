@@ -1,4 +1,4 @@
-import { AboutCMS } from "@/lib/cms/types";
+import { AboutCMS } from "@/src/libs/cms/types";
 import { AboutVM } from "./pages/AboutPage";
 
 export function mapAbout(dto: AboutCMS): AboutVM {
