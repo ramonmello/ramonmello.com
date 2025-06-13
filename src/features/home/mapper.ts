@@ -1,4 +1,4 @@
-import { HomeCMS } from "@shared/lib/cms/types";
+import { HomeCMS } from "@/lib/cms/types";
 import { HomeVM } from "./pages/HomePage";
 
 export function mapHome(dto: HomeCMS): HomeVM {

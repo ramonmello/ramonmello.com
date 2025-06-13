@@ -2,7 +2,7 @@ import { draftMode } from "next/headers";
 import dynamic from "next/dynamic";
 import { HomePage } from "@home/pages/HomePage";
 import { mapHome } from "@home/mapper";
-import { cms } from "@shared/lib/cms/client";
+import { cms } from "@/lib/cms/client";
 
 const HomePagePreview = dynamic(() => import("@home/pages/HomePagePreview"));
 
