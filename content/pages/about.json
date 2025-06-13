@@ -1,9 +1,21 @@
 {
   "title": "About Page",
-  "description": "",
+  "description": "Descrição da página about",
   "experiences": [
     {
-      "currentJob": false
+      "role": "Front-end Developer",
+      "company": "TODSPACE",
+      "startDate": "2023-01-13T00:00:00.000Z",
+      "currentJob": false,
+      "contributions": "Criação e teste de MVPs junto à equipe de produto, com foco na validação de ideias e melhoria contínua baseada no feedback dos usuários. Inclui o desenvolvimento de uma busca inteligente com Algolia que integrou cinco projetos diferentes em um único ambiente de conteúdo, oferecendo navegação semântica entre mais de 2 000 artigos.",
+      "tags": [
+        {
+          "tag": "content/tags/tailwindcss.json"
+        },
+        {
+          "tag": "content/tags/next.js.json"
+        }
+      ]
     }
   ],
   "projects": [

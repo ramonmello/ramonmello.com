@@ -5,36 +5,48 @@ export const AboutPageTemplate: Template = {
   label: "About",
   name: "about",
   fields: [
-    { type: "string", label: "Title", name: "title" },
+    { type: "string", label: "Title", name: "title", required: true },
     {
       type: "string",
       label: "Descrição",
       name: "description",
       ui: { component: "textarea" },
+      required: true,
     },
     {
       type: "object",
       label: "Experiences",
       name: "experiences",
       list: true,
+      required: true,
+      ui: {
+        itemProps: (item) => {
+          return {
+            label: `${item.company} - ${item.role}`,
+          };
+        },
+      },
       fields: [
-        { type: "string", name: "role", label: "Role" },
-        { type: "string", name: "company", label: "Company" },
+        { type: "string", name: "role", label: "Role", required: true },
+        { type: "string", name: "company", label: "Company", required: true },
         {
           type: "datetime",
           name: "startDate",
           label: "Start Date",
+          required: true,
           ui: { component: "date", dateFormat: "MM/YYYY" },
         },
         {
           type: "boolean",
           name: "currentJob",
           label: "Current Job",
+          required: true,
         },
         {
           type: "datetime",
           name: "endDate",
           label: "End Date",
+          required: false,
           ui: {
             component: "date",
             dateFormat: "MM/YYYY",
@@ -44,6 +56,7 @@ export const AboutPageTemplate: Template = {
           type: "string",
           name: "contributions",
           label: "Contributions",
+          required: true,
           ui: { component: "textarea" },
         },
         tagsReference,

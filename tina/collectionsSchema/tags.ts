@@ -10,6 +10,7 @@ export const tagsCollection: Collection = {
       type: "string",
       label: "Label",
       name: "label",
+      required: true,
     },
   ],
 };

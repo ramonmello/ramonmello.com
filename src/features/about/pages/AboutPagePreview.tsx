@@ -1,23 +1,8 @@
 "use client";
 
-import { useTina } from "tinacms/dist/react";
 import { AboutPage } from "./AboutPage";
+import { TinaClient, type UseTinaProps } from "@shared/components/tina-client";
 
-type Props = {
-  query: string;
-  data: any;
-  variables: {
-    relativePath: string;
-  };
-};
-
-export default function AboutPagePreview(props: Props) {
-  const { query, variables, data } = props;
-  const { data: liveData } = useTina({
-    query,
-    variables,
-    data,
-  });
-
-  return <AboutPage data={liveData.page} />;
+export default function AboutPagePreview(props: UseTinaProps<any>) {
+  return <TinaClient props={props} Component={AboutPage} />;
 }
