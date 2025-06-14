@@ -1,6 +1,4 @@
 {
-  "title": "About Page",
-  "description": "Descrição da página about",
   "experiences": [
     {
       "role": "Front-end Developer",
@@ -18,8 +16,6 @@
       ]
     }
   ],
-  "projects": [
-    {}
-  ],
+  "projects": [{}],
   "_template": "about"
 }

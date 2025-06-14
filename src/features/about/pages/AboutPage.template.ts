@@ -5,14 +5,6 @@ export const AboutPageTemplate: Template = {
   label: "About",
   name: "about",
   fields: [
-    { type: "string", label: "Title", name: "title", required: true },
-    {
-      type: "string",
-      label: "Descrição",
-      name: "description",
-      ui: { component: "textarea" },
-      required: true,
-    },
     {
       type: "object",
       label: "Experiences",
