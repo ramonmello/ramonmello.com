@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { StarCanvas } from "@shared/components/star-canvas";
-import { TinaEditListener } from "@shared/components/TinaEditListener";
-import { Layout } from "@shared/components/layout";
+import { StarsBackground } from "@/src/shared/components/laytout/StarsBackground";
+import { TinaEditListener } from "@shared/components/cms/TinaEditListener";
+import { PageShell } from "@/src/shared/components/laytout/PageShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -52,8 +52,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="antialiased dark">
-        <StarCanvas />
-        <Layout>{children}</Layout>
+        <StarsBackground />
+        <PageShell>{children}</PageShell>
       </body>
       <TinaEditListener />
     </html>

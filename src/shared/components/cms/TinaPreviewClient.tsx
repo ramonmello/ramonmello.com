@@ -18,7 +18,7 @@ export type TinaClientProps<T extends object> = {
   Component: React.FC<T>;
 };
 
-export function TinaClient<T extends object>({
+export function TinaPreviewClient<T extends object>({
   props,
   Component,
 }: TinaClientProps<T>) {

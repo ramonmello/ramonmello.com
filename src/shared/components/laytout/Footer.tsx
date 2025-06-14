@@ -1,11 +1,13 @@
 import Image from "next/image";
+import { version } from "@/package.json";
 
-export function DefaultFooter() {
+export function Footer() {
   return (
     <footer className="flex self-end w-full">
-      <div className="flex ml-auto">
+      <div className="font-lores-12 text-sm self-end">v{version}</div>
+      <div className="inline-block ml-auto">
         <a
-          className="flex mr-4"
+          className="flex mb-4"
           href="https://github.com/ramonmello"
           target="_blank"
           rel="noopener noreferrer"

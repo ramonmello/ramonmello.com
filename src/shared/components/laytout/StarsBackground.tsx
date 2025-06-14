@@ -11,7 +11,7 @@ type Star = {
   speed: number;
 };
 
-export function StarCanvas() {
+export function StarsBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stars = useRef<Star[]>([]);
 

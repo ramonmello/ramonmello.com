@@ -1,8 +1,11 @@
 "use client";
 
 import { AboutPage } from "./AboutPage";
-import { TinaClient, type UseTinaProps } from "@shared/components/tina-client";
+import {
+  TinaPreviewClient,
+  type UseTinaProps,
+} from "@shared/components/cms/TinaPreviewClient";
 
 export default function AboutPagePreview(props: UseTinaProps<any>) {
-  return <TinaClient props={props} Component={AboutPage} />;
+  return <TinaPreviewClient props={props} Component={AboutPage} />;
 }
