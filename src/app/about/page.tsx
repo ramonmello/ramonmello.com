@@ -14,7 +14,7 @@ export default async function About() {
     return <AboutPagePreview data={data} query={query} variables={variables} />;
   }
 
-  const vm = mapAbout(data.page);
+  const vm = mapAbout(data);
 
   return <AboutPage {...vm} />;
 }

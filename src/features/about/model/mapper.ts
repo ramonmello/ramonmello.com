@@ -1,7 +1,11 @@
 import { AboutCMS } from "@/src/libs/cms/types";
 import { AboutVM } from "./types";
 
-export function mapAbout(dto: AboutCMS): AboutVM {
+export function mapAbout(data: AboutCMS["data"]): AboutVM {
+  const dto = data.page;
+
+  console.log("#### data ###", data);
+
   const experiences = dto.experiences?.map((exp) => ({
     role: exp.role || "",
     company: exp.company || "",

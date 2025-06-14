@@ -14,7 +14,7 @@ export default async function Home() {
     return <HomePagePreview data={data} query={query} variables={variables} />;
   }
 
-  const vm = mapHome(data.page);
+  const vm = mapHome(data);
 
   return <HomePage {...vm} />;
 }
