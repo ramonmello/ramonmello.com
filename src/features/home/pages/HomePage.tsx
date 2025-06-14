@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { tinaField } from "tinacms/dist/react";
 import { GameWrapper } from "../ui/GameWrapper";
-import { GameControlsGuide } from "../ui/GameControlsGuide";
 import { HomeVM } from "../model/types";
 
 export function HomePage(data: HomeVM) {
@@ -41,7 +40,6 @@ export function HomePage(data: HomeVM) {
           {role}
         </span>
       </div>
-      <GameControlsGuide />
     </>
   );
 }
