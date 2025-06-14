@@ -1,6 +1,6 @@
 import { cn } from "@/src/shared/utils/cn";
 
-const ExternalLinkIcon = ({ className = "" }) => {
+export const ExternalLinkIcon = ({ className = "" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,5 +17,3 @@ const ExternalLinkIcon = ({ className = "" }) => {
     </svg>
   );
 };
-
-export default ExternalLinkIcon;

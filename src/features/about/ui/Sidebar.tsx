@@ -1,3 +1,4 @@
+import { GitHubIcon, LinkedInIcon } from "@/src/shared/components/icons";
 import Image from "next/image";
 
 const avatarBlurDataURL =
@@ -36,14 +37,7 @@ export function Sidebar() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            aria-hidden
-            className="text-amber-200 fill-amber-200"
-            src="/github-icon.svg"
-            alt="File icon"
-            width={24}
-            height={24}
-          />
+          <GitHubIcon />
         </a>
         <a
           className="flex"
@@ -51,13 +45,7 @@ export function Sidebar() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            aria-hidden
-            src="/linkedin-icon.svg"
-            alt="File icon"
-            width={24}
-            height={24}
-          />
+          <LinkedInIcon />
         </a>
       </div>
     </div>
