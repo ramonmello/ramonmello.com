@@ -1,12 +1,18 @@
 "use client";
 
 import { HomePage } from "./HomePage";
-import { HomeVM } from "../model/types";
-import {
-  TinaPreviewClient,
-  type UseTinaProps,
-} from "@shared/components/cms/TinaPreviewClient";
+import { mapHome } from "../model/mapper";
+import { HomeCMS, TinaPageData } from "@/src/libs/cms/types";
+import { useTina } from "tinacms/dist/react";
 
-export default function HomePagePreview(props: UseTinaProps<HomeVM>) {
-  return <TinaPreviewClient props={props} Component={HomePage} />;
+export default function HomePagePreview(props: TinaPageData<HomeCMS>) {
+  const { data } = useTina({
+    query: props.query,
+    variables: props.variables,
+    data: props.data,
+  });
+
+  const vm = mapHome(data.page);
+
+  return <HomePage {...vm} />;
 }
