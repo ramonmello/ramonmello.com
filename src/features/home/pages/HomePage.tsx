@@ -8,7 +8,7 @@ export function HomePage(data: HomeVM) {
   return (
     <>
       <GameWrapper />
-      <div className="flex flex-col w-full justify-between relative z-10">
+      <div className="flex flex-col w-full justify-between relative">
         <h1 className="text-8xl font-bold md:text-9xl leading-20">
           {firstName}
         </h1>
