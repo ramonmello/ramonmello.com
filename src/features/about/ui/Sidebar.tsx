@@ -20,7 +20,7 @@ export function Sidebar() {
       />
       <h1 className="font-bold text-5xl">Ramon Mello</h1>
       <p className="text-xl font-light">Full-Stack Developer</p>
-      <p className="mt-4 text-base max-w-md text-neutral-400">
+      <p className="mt-4 text-base font-light max-w-md text-neutral-300">
         Há mais de sete anos, projeto e desenvolvo interfaces que conectam
         estratégias de produto à experiência do usuário. Já liderei e colaborei
         com squads multidisciplinares, atuando como elo entre design, dados e
@@ -30,7 +30,7 @@ export function Sidebar() {
         técnicas, garantindo valor real para quem usa as soluções desenvolvidas.
       </p>
 
-      <div className="flex gap-4 mt-4">
+      <div className="flex gap-4 mt-12">
         <a
           className="flex"
           href="https://github.com/ramonmello"

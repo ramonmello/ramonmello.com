@@ -1,6 +1,6 @@
-// import ExternalLinkIcon from "@shared/components/icons/ExternalLinkIcon";
 import { cn } from "@/src/shared/utils/cn";
 import { Tag } from "./Tag";
+import { ExternalLinkIcon } from "@/src/shared/components/icons";
 
 const projects = [
   {
@@ -20,7 +20,7 @@ const projects = [
   {
     key: "1",
     title: "Engine 2D (nome provisório, aceito sugestões!)",
-    link: "https://github.com/ramonmello/ramonmello.github.io/tree/main/engine",
+    link: "https://github.com/ramonmello/ramonmello.github.io/tree/main/src/features/engine",
     description:
       "Projeto experimental que transforma páginas web em ambientes gamificados: o usuário navega como em um jogo, enquanto elementos da interface e do mundo 2D reagem de forma integrada, apagando a linha entre conteúdo e gameplay.",
     technologies: ["Canvas API", "WebGL", "Typescript"],
@@ -28,7 +28,7 @@ const projects = [
   {
     key: "2",
     title: "Synkinator",
-    link: "",
+    link: null,
     description:
       "Ferramenta em desenvolvimento que automatiza o processo de ingest de fotos e vídeos, permitindo fluxos personalizados de importação, organização e backup para fotógrafos e videomakers.",
     technologies: ["React", "Tauri", "TanStack Router"],
@@ -36,7 +36,7 @@ const projects = [
   {
     key: "3",
     title: "Crigo",
-    link: "",
+    link: null,
     description:
       "Plataforma que gera, em poucos cliques, milhares de variações de anúncios combinando criativos, headlines e copies, exportando diretamente para Google Ads Editor e Meta Ads Import.",
     technologies: ["React", "Shadcn UI", "TanStack Router"],
@@ -59,9 +59,9 @@ export function Projects() {
             >
               <h3 className="text-xl font-medium text-white flex items-center">
                 {project.title}
-                {/* {project?.link && (
+                {project?.link && (
                   <ExternalLinkIcon className="ml-2 group-hover:ml-3 group-hover:size-5 transition-all duration-300 ease-in-out" />
-                )} */}
+                )}
               </h3>
               <p className="mt-2">{project.description}</p>
               <div className="flex gap-2 mt-4">
