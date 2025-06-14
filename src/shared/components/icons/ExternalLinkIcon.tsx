@@ -1,4 +1,4 @@
-import { cn } from "@/src/utils/cn";
+import { cn } from "@/src/shared/utils/cn";
 
 const ExternalLinkIcon = ({ className = "" }) => {
   return (
