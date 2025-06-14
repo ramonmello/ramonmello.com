@@ -4,12 +4,12 @@
   "role": "Full Stack Developer",
   "socials": [
     {
-      "platform": "LinkedIn",
-      "url": "https://www.linkedin.com/in/ramonmello/"
-    },
-    {
       "platform": "GitHub",
       "url": "https://github.com/ramonmello"
+    },
+    {
+      "platform": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ramonmello/"
     }
   ],
   "bio": "Há mais de sete anos, projeto e desenvolvo interfaces que conectam estratégias de produto à experiência do usuário. Já liderei e colaborei com squads multidisciplinares, atuando como elo entre design, dados e negócios para converter insights em soluções rápidas, acessíveis e escaláveis. Mais do que escrever código, estudo a jornada e o comportamento dos usuários para validar hipóteses e embasar decisões técnicas, garantindo valor real para quem usa as soluções desenvolvidas.\n"

@@ -25,9 +25,9 @@ export const profileCollection: Collection = {
       type: "image",
       label: "Avatar",
       name: "avatar",
-      required: true,
       description:
         "Path relative to the public folder, e.g. /images/avatar.jpg",
+      required: true,
     },
     {
       type: "string",
@@ -61,21 +61,26 @@ export const profileCollection: Collection = {
           label: "Platform",
           name: "platform",
           description: "e.g. Twitter, GitHub, LinkedIn",
+          required: true,
         },
         {
           type: "string",
           label: "URL",
           name: "url",
           description: "https://…",
+          required: true,
         },
       ],
     },
     {
-      type: "rich-text",
+      type: "string",
+      ui: {
+        component: "textarea",
+      },
       label: "Bio",
       name: "bio",
-      required: true,
       description: "A brief text about yourself.",
+      required: true,
     },
   ],
 };

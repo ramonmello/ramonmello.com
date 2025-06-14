@@ -1,24 +1,32 @@
+import type { Tag, SocialNetwork } from "@shared/model/types";
+
 export type AboutVM = {
-  title: string;
-  description?: string;
-  experiences?: {
-    role: string;
-    company: string;
-    startDate: string;
-    currentJob: boolean;
-    endDate?: string | null;
-    contributions: string;
-    tags?: Tag[] | null;
-  }[];
-  projects?: {
-    name: string;
-    link?: string;
-    summary: string;
-    tags?: Tag[];
-  }[];
+  profile: Profile;
+  experiences?: Experience[];
+  projects?: Project[];
 };
 
-type Tag = {
-  id: string;
-  label: string;
+export type Profile = {
+  avatar: string;
+  name: string;
+  role: string;
+  bio: string;
+  socials: SocialNetwork[];
+};
+
+export type Project = {
+  name: string;
+  link?: string;
+  summary: string;
+  tags?: Tag[];
+};
+
+export type Experience = {
+  role: string;
+  company: string;
+  startDate: string;
+  currentJob: boolean;
+  endDate?: string | null;
+  contributions: string;
+  tags?: Tag[] | null;
 };

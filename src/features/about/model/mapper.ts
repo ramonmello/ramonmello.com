@@ -1,10 +1,10 @@
 import { AboutCMS } from "@/src/libs/cms/types";
 import { AboutVM } from "./types";
+import { SocialPlatform } from "@/src/shared/model/types";
 
 export function mapAbout(data: AboutCMS["data"]): AboutVM {
   const dto = data.page;
-
-  console.log("#### data ###", data);
+  const profileDto = data.profile;
 
   const experiences = dto.experiences?.map((exp) => ({
     role: exp.role || "",
@@ -35,9 +35,19 @@ export function mapAbout(data: AboutCMS["data"]): AboutVM {
       })
       .filter((proj): proj is NonNullable<typeof proj> => proj !== null) || [];
 
+  const profile = {
+    avatar: profileDto.avatar,
+    name: profileDto.name,
+    role: profileDto.role,
+    bio: profileDto.bio,
+    socials: (profileDto.socials ?? []).map((s) => ({
+      platform: s?.platform.toLowerCase() as SocialPlatform,
+      url: s?.url || "",
+    })),
+  };
+
   return {
-    title: dto.title || "",
-    description: dto.description || "",
+    profile,
     experiences,
     projects,
   };

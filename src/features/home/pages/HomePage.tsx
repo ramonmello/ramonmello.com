@@ -3,7 +3,6 @@ import { GameWrapper } from "../ui/GameWrapper";
 import { HomeVM } from "../model/types";
 
 export function HomePage(data: HomeVM) {
-  console.log("#### DATA ###", data);
   const { firstName, lastName, role, picture } = data;
 
   return (
