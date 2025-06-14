@@ -1,14 +1,8 @@
 import Image from "next/image";
 import { tinaField } from "tinacms/dist/react";
-import { GameWrapper } from "../components/GameWrapper";
-import { GameControlsGuide } from "../components/GameControlsGuide";
-
-export type HomeVM = {
-  firstName: string;
-  lastName: string;
-  role: string;
-  picture: string;
-};
+import { GameWrapper } from "../ui/GameWrapper";
+import { GameControlsGuide } from "../ui/GameControlsGuide";
+import { HomeVM } from "../model/types";
 
 export function HomePage(data: HomeVM) {
   const { firstName, lastName, role, picture } = data;

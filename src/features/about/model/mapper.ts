@@ -1,5 +1,5 @@
 import { AboutCMS } from "@/src/libs/cms/types";
-import { AboutVM } from "./pages/AboutPage";
+import { AboutVM } from "./types";
 
 export function mapAbout(dto: AboutCMS): AboutVM {
   const experiences = dto.experiences?.map((exp) => ({

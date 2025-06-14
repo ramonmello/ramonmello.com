@@ -1,5 +1,5 @@
 import { HomeCMS } from "@/src/libs/cms/types";
-import { HomeVM } from "./pages/HomePage";
+import { HomeVM } from "./types";
 
 export function mapHome(dto: HomeCMS): HomeVM {
   return {

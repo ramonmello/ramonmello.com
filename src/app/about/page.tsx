@@ -1,6 +1,6 @@
 import { draftMode } from "next/headers";
 import dynamic from "next/dynamic";
-import { mapAbout } from "@about/mapper";
+import { mapAbout } from "@about/model/mapper";
 import { cms } from "@/src/libs/cms/client";
 import { AboutPage } from "@about/pages/AboutPage";
 

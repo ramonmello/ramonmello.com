@@ -1,7 +1,7 @@
 import { draftMode } from "next/headers";
 import dynamic from "next/dynamic";
 import { HomePage } from "@home/pages";
-import { mapHome } from "@home/mapper";
+import { mapHome } from "@home/model/mapper";
 import { cms } from "@/src/libs/cms/client";
 
 const HomePagePreview = dynamic(() => import("@home/pages/HomePagePreview"));

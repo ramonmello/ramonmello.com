@@ -1,6 +1,7 @@
 "use client";
 
-import { HomePage, type HomeVM } from "./HomePage";
+import { HomePage } from "./HomePage";
+import { HomeVM } from "../model/types";
 import {
   TinaPreviewClient,
   type UseTinaProps,

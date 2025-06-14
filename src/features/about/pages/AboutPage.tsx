@@ -1,31 +1,7 @@
-import { Sidebar } from "@about/components/Sidebar";
-import { Projects } from "@about/components/Projects";
-import { Experiences } from "@about/components/Experiences";
-
-export type AboutVM = {
-  title: string;
-  description?: string;
-  experiences?: {
-    role: string;
-    company: string;
-    startDate: string;
-    currentJob: boolean;
-    endDate?: string | null;
-    contributions: string;
-    tags?: Tag[] | null;
-  }[];
-  projects?: {
-    name: string;
-    link?: string;
-    summary: string;
-    tags?: Tag[];
-  }[];
-};
-
-type Tag = {
-  id: string;
-  label: string;
-};
+import { Sidebar } from "../ui/Sidebar";
+import { Projects } from "../ui/Projects";
+import { Experiences } from "../ui/Experiences";
+import { AboutVM } from "../model/types";
 
 export function AboutPage(data: AboutVM) {
   console.log("data ############# about page", data);
