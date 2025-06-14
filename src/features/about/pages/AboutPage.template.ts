@@ -1,5 +1,5 @@
 import { Template } from "tinacms";
-import { tagsReference } from "@/tina/sharedFields/tagsReference";
+import { tagsReference } from "@/tina/collectionsSchema/sharedFields/tagsReference";
 
 export const AboutPageTemplate: Template = {
   label: "About",
