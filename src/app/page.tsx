@@ -10,11 +10,11 @@ export default async function Home() {
   const draft = await draftMode();
   const { data, query, variables } = await cms.getHome();
 
-  const vm = mapHome(data.page);
-
   if (draft.isEnabled) {
     return <HomePagePreview data={data} query={query} variables={variables} />;
   }
+
+  const vm = mapHome(data.page);
 
   return <HomePage {...vm} />;
 }
