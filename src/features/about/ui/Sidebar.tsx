@@ -21,9 +21,7 @@ export function Sidebar(props: Profile) {
       />
       <h1 className="font-bold text-5xl">{props.name}</h1>
       <p className="text-xl font-light">{props.role}</p>
-      <p className="mt-4 text-base font-light max-w-md text-neutral-300">
-        {props.bio}
-      </p>
+      <p className="mt-4 font-light max-w-md text-neutral-300">{props.bio}</p>
 
       <div className="flex gap-4 mt-12">
         {props.socials.map((s) => (
