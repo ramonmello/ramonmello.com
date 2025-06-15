@@ -27,7 +27,7 @@ export function Projects(props: Props) {
                   <ExternalLinkIcon className="ml-2 group-hover:ml-3 group-hover:size-5 transition-all duration-300 ease-in-out" />
                 )}
               </h3>
-              <p className="mt-2">{project.summary}</p>
+              <p className="mt-2 bg-black">{project.summary}</p>
               <div className="flex gap-2 mt-4">
                 {project.tags.map((tag) => (
                   <Tag key={tag.id} label={tag.label} />

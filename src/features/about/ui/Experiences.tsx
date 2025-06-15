@@ -24,7 +24,7 @@ export function Experiences(props: Props) {
               endDate={exp.endDate}
             />
           </p>
-          <p className="mt-2">{exp.contributions}</p>
+          <p className="mt-2 bg-black">{exp.contributions}</p>
           <div className="flex gap-2 mt-4">
             {exp.tags.map((tag) => (
               <Tag key={tag.id} label={tag.label} />
