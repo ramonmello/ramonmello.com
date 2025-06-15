@@ -8,10 +8,90 @@
       "contributions": "Criação e teste de MVPs junto à equipe de produto, com foco na validação de ideias e melhoria contínua baseada no feedback dos usuários. Inclui o desenvolvimento de uma busca inteligente com Algolia que integrou cinco projetos diferentes em um único ambiente de conteúdo, oferecendo navegação semântica entre mais de 2000 artigos.",
       "tags": [
         {
-          "tag": "content/tags/tailwindcss.json"
+          "tag": "content/tags/react.json"
         },
         {
           "tag": "content/tags/next.js.json"
+        },
+        {
+          "tag": "content/tags/tailwindcss.json"
+        },
+        {
+          "tag": "content/tags/algolia.json"
+        }
+      ]
+    },
+    {
+      "role": "Tech Lead",
+      "company": "Softo – DevTeam as a Service",
+      "startDate": "2022-06-14T23:00:00.000Z",
+      "currentJob": false,
+      "endDate": "2023-10-14T23:00:00.000Z",
+      "contributions": "* Discussões Técnicas: Além das atividades de desenvolvimento, participei ativamente de debates sobre processos de onboarding de clientes e estratégias para manter a qualidade do código.\n* Coordenação de Tarefas: Colaborei com a equipe de PM na distribuição de tarefas, assegurando que os projetos fossem executados de forma eficiente.\n* Avaliação de Equipe: Integrei os comitês de avaliação dos membros da equipe front-end, contribuindo para o desenvolvimento e integração dos novos colaboradores.",
+      "tags": [
+        {
+          "tag": "content/tags/react.json"
+        }
+      ]
+    },
+    {
+      "role": "Front-end Developer",
+      "company": "Softo – DevTeam as a Service",
+      "startDate": "2021-06-30T23:00:00.000Z",
+      "currentJob": false,
+      "endDate": "2022-05-31T23:00:00.000Z",
+      "contributions": "Atuação em diversos projetos simultâneos, abrangendo desde startups em fase inicial até sistemas consolidados em produção que demandavam manutenção e o desenvolvimento de novas funcionalidades.",
+      "tags": [
+        {
+          "tag": "content/tags/next.js.json"
+        },
+        {
+          "tag": "content/tags/react.json"
+        }
+      ]
+    },
+    {
+      "role": "Front-end Developer",
+      "company": "Farmácias APP (GrupoSC)",
+      "startDate": "2021-02-15T00:00:00.000Z",
+      "currentJob": false,
+      "endDate": "2021-08-14T23:00:00.000Z",
+      "contributions": "Desenvolvimento e suporte ao sistema em produção, com contribuições estratégicas em decisões de produto e no roadmap técnico.",
+      "tags": [
+        {
+          "tag": "content/tags/react.json"
+        },
+        {
+          "tag": "content/tags/next.js.json"
+        }
+      ]
+    },
+    {
+      "role": "Full-stack Developer",
+      "company": "DrChat",
+      "startDate": "2020-03-15T00:00:00.000Z",
+      "currentJob": false,
+      "endDate": "2021-02-15T00:00:00.000Z",
+      "contributions": "Entrega ágil de novas funcionalidades em uma plataforma de telemedicina, atuando full-stack com Node.js e Next.js.",
+      "tags": [
+        {
+          "tag": "content/tags/next.js.json"
+        }
+      ]
+    },
+    {
+      "role": "System Analyst",
+      "company": "Delage",
+      "startDate": "2018-12-15T00:00:00.000Z",
+      "currentJob": false,
+      "endDate": "2020-04-14T23:00:00.000Z",
+      "contributions": "Suporte e desenvolvimento de sistemas logísticos, incluindo a criação de um aplicativo interno com React e React Native.",
+      "tags": [
+        {
+          "tag": "content/tags/react_native.json"
+        },
+        {
+          "tag": "content/tags/react.json"
         }
       ]
     }
@@ -24,6 +104,61 @@
       "tags": [
         {
           "tag": "content/tags/next.js.json"
+        },
+        {
+          "tag": "content/tags/tailwindcss.json"
+        },
+        {
+          "tag": "content/tags/shadcn_ui.json"
+        },
+        {
+          "tag": "content/tags/algolia.json"
+        },
+        {
+          "tag": "content/tags/radix_ui.json"
+        }
+      ]
+    },
+    {
+      "name": "Game Engine 2D",
+      "link": "https://github.com/ramonmello/ramonmello.github.io/tree/main/src/features/engine",
+      "summary": "Projeto experimental que transforma páginas web em ambientes gamificados: o usuário navega como em um jogo, enquanto elementos da interface e do mundo 2D reagem de forma integrada, apagando a linha entre conteúdo e gameplay.",
+      "tags": [
+        {
+          "tag": "content/tags/typescript.json"
+        },
+        {
+          "tag": "content/tags/webgl.json"
+        },
+        {
+          "tag": "content/tags/canvas_api.json"
+        }
+      ]
+    },
+    {
+      "name": "Crigo",
+      "summary": "Plataforma que gera, em poucos cliques, milhares de variações de anúncios combinando criativos, headlines e copies, exportando diretamente para Google Ads Editor e Meta Ads Import.",
+      "tags": [
+        {
+          "tag": "content/tags/react.json"
+        },
+        {
+          "tag": "content/tags/shadcn_ui.json"
+        }
+      ]
+    },
+    {
+      "name": "Synkinator",
+      "summary": "Ferramenta em desenvolvimento que automatiza o processo de ingest de fotos e vídeos, permitindo fluxos personalizados de importação, organização e backup para fotógrafos e videomakers.",
+      "tags": [
+        {
+          "tag": "content/tags/react.json"
+        },
+        {
+          "tag": "content/tags/rust.json"
+        },
+        {
+          "tag": "content/tags/tauri.json"
         }
       ]
     }
