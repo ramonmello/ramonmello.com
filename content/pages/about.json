@@ -2,10 +2,10 @@
   "experiences": [
     {
       "role": "Front-end Developer",
-      "company": "TODSPACE",
-      "startDate": "2023-01-13T00:00:00.000Z",
-      "currentJob": false,
-      "contributions": "Criação e teste de MVPs junto à equipe de produto, com foco na validação de ideias e melhoria contínua baseada no feedback dos usuários. Inclui o desenvolvimento de uma busca inteligente com Algolia que integrou cinco projetos diferentes em um único ambiente de conteúdo, oferecendo navegação semântica entre mais de 2 000 artigos.",
+      "company": "Tod Space",
+      "startDate": "2023-09-30T23:00:00.000Z",
+      "currentJob": true,
+      "contributions": "Criação e teste de MVPs junto à equipe de produto, com foco na validação de ideias e melhoria contínua baseada no feedback dos usuários. Inclui o desenvolvimento de uma busca inteligente com Algolia que integrou cinco projetos diferentes em um único ambiente de conteúdo, oferecendo navegação semântica entre mais de 2000 artigos.",
       "tags": [
         {
           "tag": "content/tags/tailwindcss.json"
@@ -16,6 +16,17 @@
       ]
     }
   ],
-  "projects": [{}],
+  "projects": [
+    {
+      "name": "Orbita",
+      "link": "https://www.orbita.press/fr",
+      "summary": "Hub de conteúdo do ecossistema Sens Public que centraliza\nartigos, notícias e eventos em um único domínio, usando busca\nsemântica Algolia para conectar temas e projetos.",
+      "tags": [
+        {
+          "tag": "content/tags/next.js.json"
+        }
+      ]
+    }
+  ],
   "_template": "about"
 }

@@ -23,6 +23,7 @@ export const tagsReference: TinaField = {
       type: "reference",
       name: "tag",
       label: "Tag",
+      required: true,
       collections: ["tag"],
     },
   ],

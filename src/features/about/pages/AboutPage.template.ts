@@ -51,7 +51,7 @@ export const AboutPageTemplate: Template = {
           required: true,
           ui: { component: "textarea" },
         },
-        tagsReference,
+        { ...tagsReference, required: true },
       ],
     },
     {
@@ -59,11 +59,20 @@ export const AboutPageTemplate: Template = {
       label: "Projects",
       name: "projects",
       list: true,
+      required: true,
+      ui: {
+        itemProps: (item) => {
+          return {
+            label: item.name,
+          };
+        },
+      },
       fields: [
         {
           type: "string",
           name: "name",
           label: "Name",
+          required: true,
         },
         {
           type: "string",
@@ -74,9 +83,10 @@ export const AboutPageTemplate: Template = {
           type: "string",
           name: "summary",
           label: "Summary",
+          required: true,
           ui: { component: "textarea" },
         },
-        tagsReference,
+        { ...tagsReference, required: true },
       ],
     },
   ],

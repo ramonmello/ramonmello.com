@@ -2,7 +2,7 @@ import type { Tag, SocialNetwork } from "@shared/model/types";
 
 export type AboutVM = {
   profile: Profile;
-  experiences?: Experience[];
+  experiences: Experience[];
   projects?: Project[];
 };
 
@@ -18,15 +18,15 @@ export type Project = {
   name: string;
   link?: string;
   summary: string;
-  tags?: Tag[];
+  tags: Tag[];
 };
 
 export type Experience = {
   role: string;
   company: string;
-  startDate: string;
+  startDate: Date;
   currentJob: boolean;
-  endDate?: string | null;
+  endDate?: Date;
   contributions: string;
-  tags?: Tag[] | null;
+  tags: Tag[];
 };

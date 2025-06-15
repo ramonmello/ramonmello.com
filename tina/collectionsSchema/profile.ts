@@ -48,6 +48,7 @@ export const profileCollection: Collection = {
       label: "Social Links",
       name: "socials",
       list: true,
+      required: true,
       ui: {
         itemProps: (item) => {
           return {
