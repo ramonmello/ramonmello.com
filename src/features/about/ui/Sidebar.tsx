@@ -24,15 +24,15 @@ export function Sidebar(props: Profile) {
       <p className="mt-4 max-w-md text-neutral-400 bg-black">{props.bio}</p>
 
       <div className="flex gap-4 mt-12">
-        {props.socials.map((s) => (
+        {props.socials.map(({ platform, url }) => (
           <a
-            key={`${s.platform}-${s.url}`}
+            key={`${platform}-${url}`}
             className="flex"
-            href={s.url}
+            href={url}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <SocialIcon platform={s.platform} />
+            <SocialIcon platform={platform} />
           </a>
         ))}
       </div>
