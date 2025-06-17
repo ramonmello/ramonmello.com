@@ -9,7 +9,7 @@ export function AboutPage(data: AboutVM) {
       <div className="lg:flex lg:justify-between lg:gap-4">
         <Sidebar {...data.profile} />
         <div className="w-full lg:w-7/12 text-neutral-400">
-          <Projects projects={data.projects ?? []} />
+          <Projects projects={data.projects} />
           <Experiences experiences={data.experiences} />
         </div>
       </div>

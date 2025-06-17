@@ -3,7 +3,7 @@ import type { Tag, SocialNetwork } from "@shared/model/types";
 export type AboutVM = {
   profile: Profile;
   experiences: Experience[];
-  projects?: Project[];
+  projects: Project[];
 };
 
 export type Profile = {
