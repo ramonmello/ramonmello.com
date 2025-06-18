@@ -2,6 +2,7 @@ import * as React from "react";
 import { Tag } from "@shared/components/ui/Tag";
 import { cn } from "@shared/utils/cn";
 import type { Project } from "../model/types";
+import { ExternalLinkIcon } from "@/src/shared/components/icons/ExternalLinkIcon";
 
 type Props = {
   projects: Project[];
@@ -26,6 +27,7 @@ function ProjectItem({ name, summary, tags, link }: Project) {
     <article className="border-l-2 border-neutral-700 pl-6 py-4 hover:border-neutral-300 transition-colors duration-300">
       <h3 className="text-xl font-medium text-white flex items-center">
         {name}
+        {link && <ExternalLinkIcon className="ml-2" />}
       </h3>
       <p className="mt-2 bg-black">{summary}</p>
       <div className="flex gap-2 mt-4">
