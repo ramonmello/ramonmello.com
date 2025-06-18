@@ -15,9 +15,11 @@ export function Experiences(props: Props) {
           key={`${exp.company}-${exp.role}`}
           className="border-l-2 border-neutral-700 pl-6 my-8 hover:border-neutral-300 transition-colors duration-300"
         >
-          <h3 className="text-xl font-medium text-white">{exp.role}</h3>
-          <p className="text-lg">{exp.company}</p>
-          <p className="text-sm mt-1">
+          <h3 className="text-xl font-medium text-white w-fit bg-black">
+            {exp.role}
+          </h3>
+          <p className="text-lg w-fit bg-black">{exp.company}</p>
+          <p className="text-lg mt-1 w-fit bg-black">
             <EmploymentPeriod
               currentJob={exp.currentJob}
               startDate={exp.startDate}
