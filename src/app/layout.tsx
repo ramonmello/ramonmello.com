@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { StarsBackground } from "@/src/shared/components/laytout/StarsBackground";
-import { TinaEditListener } from "@shared/components/cms/TinaEditListener";
 import { PageShell } from "@/src/shared/components/laytout/PageShell";
 import "./globals.css";
 
@@ -55,7 +54,6 @@ export default function RootLayout({
         <StarsBackground />
         <PageShell>{children}</PageShell>
       </body>
-      <TinaEditListener />
     </html>
   );
 }
