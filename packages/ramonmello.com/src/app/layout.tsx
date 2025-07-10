@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { StarsBackground } from "@/src/shared/components/laytout/StarsBackground";
-import { PageShell } from "@/src/shared/components/laytout/PageShell";
+import { StarsBackground } from "@/shared/components/laytout/StarsBackground";
+import { PageShell } from "@/shared/components/laytout/PageShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
