@@ -2,7 +2,7 @@ import * as React from "react";
 import { Tag } from "@shared/components/ui/Tag";
 import { cn } from "@shared/utils/cn";
 import type { Project } from "../model/types";
-import { ExternalLinkIcon } from "@/src/shared/components/icons/ExternalLinkIcon";
+import { ExternalLinkIcon } from "@shared/components/icons/ExternalLinkIcon";
 
 type Props = {
   projects: Project[];

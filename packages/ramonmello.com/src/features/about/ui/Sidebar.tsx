@@ -1,4 +1,4 @@
-import { SocialIcon } from "@/src/shared/components/icons";
+import { SocialIcon } from "@shared/components/icons";
 import Image from "next/image";
 import { Profile } from "../model/types";
 
