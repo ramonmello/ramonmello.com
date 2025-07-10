@@ -1,16 +1,15 @@
-import { System } from "@engine/core/base/System";
-import { Entity } from "@engine/core/base/Entity";
-import { World } from "@engine/core/base/World";
-import { TransformComponent } from "@engine/core/components/TransformComponent";
-import { RenderComponent } from "@engine/core/components/RenderComponent";
-import { PhysicsComponent } from "@engine/core/components/PhysicsComponent";
-import { ColliderComponent } from "@engine/core/components/ColliderComponent";
-import { ProjectileComponent } from "@games/asteroids/components/ProjectileComponent";
 import {
-  PLAYER_EVENTS,
-  PROJECTILE_EVENTS,
-} from "@engine/core/messaging/MessageTypes";
-import { MessageData } from "@engine/core/messaging/MessageBus";
+  System,
+  Entity,
+  World,
+  TransformComponent,
+  RenderComponent,
+  PhysicsComponent,
+  ColliderComponent,
+  MessageData,
+} from "@engine/index";
+import { ProjectileComponent } from "@games/asteroids/components/ProjectileComponent";
+import { PLAYER_EVENTS, PROJECTILE_EVENTS } from "@engine/index";
 
 interface FireData extends MessageData {
   position: { x: number; y: number };

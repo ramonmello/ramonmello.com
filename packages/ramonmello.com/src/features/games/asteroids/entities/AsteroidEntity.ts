@@ -1,9 +1,11 @@
-import { Entity } from "@engine/core/base/Entity";
-import { TransformComponent } from "@engine/core/components/TransformComponent";
-import { PhysicsComponent } from "@engine/core/components/PhysicsComponent";
-import { RenderComponent } from "@engine/core/components/RenderComponent";
-import { getWebGLContext } from "@engine/core/rendering/Context";
-import { ColliderComponent } from "@engine/core/components/ColliderComponent";
+import {
+  Entity,
+  TransformComponent,
+  PhysicsComponent,
+  RenderComponent,
+  ColliderComponent,
+  getWebGLContext,
+} from "@engine/index";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
 function generateAsteroidVertices(size: number, points = 8): Float32Array {

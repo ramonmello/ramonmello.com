@@ -1,11 +1,13 @@
-import { System } from "@engine/core/base/System";
-import { PhysicsComponent } from "@engine/core/components/PhysicsComponent";
-import { TransformComponent } from "@engine/core/components/TransformComponent";
+import {
+  System,
+  PhysicsComponent,
+  TransformComponent,
+  Entity,
+  PLAYER_EVENTS,
+  TARGET_FPS,
+} from "@engine/index";
 import { ShipComponent } from "../components/ShipComponent";
 import { AsteroidsGame } from "@games/asteroids/asteroidsGame";
-import { Entity } from "@engine/core/base/Entity";
-import { PLAYER_EVENTS } from "@engine/core/messaging/MessageTypes";
-import { TARGET_FPS } from "@engine/core/config/time";
 
 export class ShipControlSystem extends System {
   readonly componentTypes = [

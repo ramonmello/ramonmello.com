@@ -1,17 +1,16 @@
 import { BaseGame } from "@engine/scaffold/BaseGame";
 import { GameConfig } from "@engine/scaffold/Game";
-import { World } from "@engine/core/base/World";
-import { PhysicsSystem } from "@engine/core/systems/PhysicsSystem";
-import { RenderSystem } from "@engine/core/systems/RenderSystem";
-import { Entity } from "@engine/core/base/Entity";
+import { World, Entity, PhysicsSystem, RenderSystem } from "@engine/index";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
-import { CollisionSystem } from "@engine/core/systems/CollisionSystem";
+import {
+  CollisionSystem,
+  ParticleSystem,
+  EmitterRenderSystem,
+} from "@engine/index";
 import { AsteroidCollisionSystem } from "./systems/AsteroidCollisionCleanupSystem";
-import { ParticleSystem } from "@engine/core/systems/ParticleSystem";
 import { ExplosionSpawnSystem } from "./systems/ExplosionSpawnSystem";
-import { EmitterRenderSystem } from "@engine/core/systems/EmitterRenderSystem";
 import { WaveSystem } from "./systems/WaveSystem";
 import { PlayerRespawnSystem } from "./systems/PlayerRespawnSystem";
 

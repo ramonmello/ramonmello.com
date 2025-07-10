@@ -1,12 +1,12 @@
-import { System } from "@engine/core/base/System";
-import { Entity } from "@engine/core/base/Entity";
-import { World } from "@engine/core/base/World";
-import { createAsteroidEntity } from "../entities/AsteroidEntity";
 import {
+  System,
+  Entity,
+  World,
   GAME_EVENTS,
   ENTITY_EVENTS,
-} from "@engine/core/messaging/MessageTypes";
-import { MessageData } from "@engine/core/messaging/MessageBus";
+  MessageData,
+} from "@engine/index";
+import { createAsteroidEntity } from "../entities/AsteroidEntity";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
 export class WaveSystem extends System {

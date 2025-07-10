@@ -1,5 +1,4 @@
-import { Component } from "@engine/core/base/Component";
-import { Entity } from "@engine/core/base/Entity";
+import { Component, Entity } from "@engine/index";
 
 export class ProjectileComponent extends Component {
   static readonly TYPE = "projectile";

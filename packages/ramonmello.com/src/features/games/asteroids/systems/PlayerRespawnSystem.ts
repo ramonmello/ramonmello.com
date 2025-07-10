@@ -1,8 +1,5 @@
 // engine/core/systems/PlayerRespawnSystem.ts
-import { System } from "@engine/core/base/System";
-import { MessageBus } from "@engine/core/messaging/MessageBus";
-import { PLAYER_EVENTS } from "@engine/core/messaging/MessageTypes";
-import { World } from "@engine/core/base/World";
+import { System, World, MessageBus, PLAYER_EVENTS } from "@engine/index";
 import { createShipEntity } from "@games/asteroids/entities/ShipEntity";
 
 export class PlayerRespawnSystem extends System {
