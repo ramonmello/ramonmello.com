@@ -1,5 +1,4 @@
-import { BaseGame } from "@engine/scaffold/BaseGame";
-import { GameConfig } from "@engine/scaffold/Game";
+import { BaseGame, GameConfig } from "@engine/scaffold";
 import { World, Entity, PhysicsSystem, RenderSystem } from "@engine/index";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
