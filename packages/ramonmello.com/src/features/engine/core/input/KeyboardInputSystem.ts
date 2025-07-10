@@ -1,5 +1,9 @@
-import type { KeyboardHandler } from "@games/hooks/useKeyboard";
 import { InputSystem } from "./InputSystem";
+
+export type KeyState = { [key: string]: boolean };
+export interface KeyboardHandler {
+  getState(): KeyState;
+}
 
 export class KeyboardInputSystem implements InputSystem {
   constructor(private keyboard: KeyboardHandler) {}

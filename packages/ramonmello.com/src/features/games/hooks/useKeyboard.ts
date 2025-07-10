@@ -1,10 +1,5 @@
+import { KeyboardHandler, type KeyState } from "@engine/index";
 import { useEffect, useRef } from "react";
-
-export type KeyState = { [key: string]: boolean };
-
-export interface KeyboardHandler {
-  getState(): KeyState;
-}
 
 export function useKeyboard(): KeyboardHandler {
   const keysRef = useRef<KeyState>({});
