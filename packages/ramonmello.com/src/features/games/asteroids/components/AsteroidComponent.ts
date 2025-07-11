@@ -1,4 +1,4 @@
-import { Component } from "@engine/index";
+import { Component } from "@engine/core";
 
 export class AsteroidComponent extends Component {
   static readonly TYPE = "asteroid";

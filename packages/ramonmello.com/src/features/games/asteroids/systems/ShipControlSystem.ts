@@ -5,7 +5,7 @@ import {
   Entity,
   PLAYER_EVENTS,
   TARGET_FPS,
-} from "@engine/index";
+} from "@engine/core";
 import { ShipComponent } from "../components/ShipComponent";
 import { AsteroidsGame } from "@games/asteroids/asteroidsGame";
 

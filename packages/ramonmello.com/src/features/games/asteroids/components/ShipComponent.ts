@@ -1,4 +1,4 @@
-import { Component, Vector2 } from "@engine/index";
+import { Component, Vector2 } from "@engine/core";
 
 export class ShipComponent extends Component {
   static readonly TYPE = "ship";

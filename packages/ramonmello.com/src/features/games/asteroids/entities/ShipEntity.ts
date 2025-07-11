@@ -5,7 +5,7 @@ import {
   PhysicsComponent,
   ColliderComponent,
   getWebGLContext,
-} from "@engine/index";
+} from "@engine/core";
 import { ShipComponent } from "../components/ShipComponent";
 
 export function createShipEntity(): Entity {

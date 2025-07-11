@@ -4,10 +4,10 @@ import {
   Entity,
   TransformComponent,
   ParticleEmitterComponent,
-} from "@engine/index";
-import { PLAYER_EVENTS, PROJECTILE_EVENTS } from "@engine/index";
-import { MessageData } from "@engine/index";
-import { EmitterConfig } from "@engine/index";
+} from "@engine/core";
+import { PLAYER_EVENTS, PROJECTILE_EVENTS } from "@engine/core";
+import { MessageData } from "@engine/core";
+import { EmitterConfig } from "@engine/core";
 
 const EXPLOSION_SMALL: EmitterConfig = {
   num: 80,

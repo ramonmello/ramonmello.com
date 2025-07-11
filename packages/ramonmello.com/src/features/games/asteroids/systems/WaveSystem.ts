@@ -5,7 +5,7 @@ import {
   GAME_EVENTS,
   ENTITY_EVENTS,
   MessageData,
-} from "@engine/index";
+} from "@engine/core";
 import { createAsteroidEntity } from "../entities/AsteroidEntity";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 

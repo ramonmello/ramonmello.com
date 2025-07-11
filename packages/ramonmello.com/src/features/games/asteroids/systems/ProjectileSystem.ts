@@ -7,9 +7,9 @@ import {
   PhysicsComponent,
   ColliderComponent,
   MessageData,
-} from "@engine/index";
+} from "@engine/core";
 import { ProjectileComponent } from "@games/asteroids/components/ProjectileComponent";
-import { PLAYER_EVENTS, PROJECTILE_EVENTS } from "@engine/index";
+import { PLAYER_EVENTS, PROJECTILE_EVENTS } from "@engine/core";
 
 interface FireData extends MessageData {
   position: { x: number; y: number };

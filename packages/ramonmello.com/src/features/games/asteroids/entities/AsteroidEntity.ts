@@ -5,7 +5,7 @@ import {
   RenderComponent,
   ColliderComponent,
   getWebGLContext,
-} from "@engine/index";
+} from "@engine/core";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
 function generateAsteroidVertices(size: number, points = 8): Float32Array {

@@ -1,14 +1,14 @@
-import { World, Entity, System } from "@engine/index";
+import { World, Entity, System } from "@engine/core";
 import {
   COLLISION_EVENTS,
   WORLD_EVENTS,
   PROJECTILE_EVENTS,
   PLAYER_EVENTS,
   ENTITY_EVENTS,
-} from "@engine/index";
+} from "@engine/core";
 import { ProjectileComponent } from "../components/ProjectileComponent";
 import { ShipComponent } from "../components/ShipComponent";
-import { MessageData, TransformComponent } from "@engine/index";
+import { MessageData, TransformComponent } from "@engine/core";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
 export class AsteroidCollisionSystem extends System {

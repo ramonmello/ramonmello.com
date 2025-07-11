@@ -1,5 +1,5 @@
-import { BaseGame, GameConfig } from "@engine/scaffold";
-import { World, Entity, PhysicsSystem, RenderSystem } from "@engine/index";
+import { BaseGame, GameConfig } from "@engine/core";
+import { World, Entity, PhysicsSystem, RenderSystem } from "@engine/core";
 import { ShipControlSystem } from "./systems/ShipControlSystem";
 import { createShipEntity } from "./entities/ShipEntity";
 import { ProjectileSystem } from "./systems/ProjectileSystem";
@@ -7,7 +7,7 @@ import {
   CollisionSystem,
   ParticleSystem,
   EmitterRenderSystem,
-} from "@engine/index";
+} from "@engine/core";
 import { AsteroidCollisionSystem } from "./systems/AsteroidCollisionCleanupSystem";
 import { ExplosionSpawnSystem } from "./systems/ExplosionSpawnSystem";
 import { WaveSystem } from "./systems/WaveSystem";

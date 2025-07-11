@@ -2,8 +2,8 @@
   "name": "ramonmello-dev-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter ramonmello.com dev",
-    "build": "pnpm --filter ramonmello.com build"
+    "dev": "pnpm --parallel --filter \"./packages/**\" dev",
+    "build": "pnpm --parallel --filter \"./packages/**\" build"
   },
   "devDependencies": {
     "typescript": "^5.4.5"

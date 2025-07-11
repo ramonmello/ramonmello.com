@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { useKeyboard } from "@games/hooks/useKeyboard";
 import { asteroidsGame } from "@games/asteroids";
-import { Manager } from "@engine/manager";
+import { Manager } from "@engine/core";
 
 export function GameWrapper() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
