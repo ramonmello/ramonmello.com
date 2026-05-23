@@ -1,11 +1,16 @@
 {
   "name": "ramonmello-dev-monorepo",
   "private": true,
+  "packageManager": "pnpm@10.33.2",
   "scripts": {
-    "dev": "pnpm --parallel --filter \"./packages/*\" --filter \"./apps/*\" dev",
-    "build": "pnpm --parallel --filter \"./packages/*\" --filter \"./apps/*\" build"
+    "dev": "pnpm --filter \"./packages/*\" build && pnpm --parallel --filter \"./packages/*\" --filter \"./apps/*\" dev",
+    "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./apps/*\" build"
   },
   "devDependencies": {
     "typescript": "^5.4.5"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
 }
