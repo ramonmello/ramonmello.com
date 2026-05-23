@@ -58,7 +58,7 @@ const aboutData = {
 };
 
 const profileData = {
-  avatar: "/ramon-avatar.jpg",
+  avatar: "/ramon-avatar.webp",
   name: "Ramon Mello",
   role: "Full Stack Developer",
   socials: [

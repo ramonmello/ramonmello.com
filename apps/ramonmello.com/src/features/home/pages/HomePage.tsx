@@ -11,7 +11,7 @@ export function HomePage() {
           <Image
             className="rounded-full object-cover h-24 -ml-1"
             aria-hidden
-            src="/ramon-avatar.jpg"
+            src="/ramon-avatar.webp"
             alt="Fotografia Ramon Mello"
             width={96}
             height={96}
