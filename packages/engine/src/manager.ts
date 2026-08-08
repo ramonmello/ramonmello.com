@@ -10,6 +10,7 @@ import {
   clearWebGLContext,
   WebGLContextOptions,
 } from "./core/rendering/Context";
+import { CanvasSizeSource, fixedCanvasSize } from "./core/rendering/canvasSize";
 
 export class Manager {
   private static instance: Manager;
@@ -25,6 +26,8 @@ export class Manager {
   private isRunning: boolean = false;
 
   private webglOptions: WebGLContextOptions = {};
+
+  private canvasSize?: CanvasSizeSource;
 
   static getInstance(): Manager {
     if (!Manager.instance) {
@@ -49,7 +52,7 @@ export class Manager {
 
   rebindCanvas(canvas: HTMLCanvasElement): void {
     clearWebGLContext();
-    initWebGLContext(canvas, this.webglOptions);
+    initWebGLContext(canvas, this.contextOptions());
   }
 
   async startGame(
@@ -59,7 +62,8 @@ export class Manager {
   ): Promise<() => void> {
     if (!this.inputSystem) throw new Error("InputSystem não configurado");
 
-    initWebGLContext(canvas, this.webglOptions);
+    this.canvasSize = this.resolveCanvasSize(game, config);
+    initWebGLContext(canvas, this.contextOptions());
 
     if (!this.hasActiveGame()) {
       await game.initialize(undefined, config);
@@ -73,6 +77,28 @@ export class Manager {
     }
 
     return () => this.pauseGame();
+  }
+
+  private contextOptions(): WebGLContextOptions {
+    return this.canvasSize
+      ? { ...this.webglOptions, size: this.canvasSize }
+      : this.webglOptions;
+  }
+
+  /**
+   * Honors `GameConfig.canvasWidth`/`canvasHeight` when the game declares both,
+   * merged with the caller's overrides. Without them the canvas keeps following
+   * its own layout size.
+   */
+  private resolveCanvasSize(
+    game: Game,
+    config?: Partial<GameConfig>
+  ): CanvasSizeSource | undefined {
+    const { canvasWidth, canvasHeight } = { ...game.getConfig(), ...config };
+
+    return canvasWidth !== undefined && canvasHeight !== undefined
+      ? fixedCanvasSize(canvasWidth, canvasHeight)
+      : undefined;
   }
 
   setInputHandler(keyboard: KeyboardHandler): void {
@@ -128,6 +154,9 @@ export class Manager {
       this.activeGame.stop();
       this.activeGame = undefined;
     }
+
+    clearWebGLContext();
+    this.canvasSize = undefined;
 
     MessageBus.getInstance().clearAllListeners();
   }

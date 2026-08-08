@@ -3,7 +3,9 @@ import {
   clearWebGLContext,
   getWebGLContext,
   initWebGLContext,
+  WebGLContext,
 } from "./Context";
+import { CanvasSizeSource, fixedCanvasSize } from "./canvasSize";
 import { DEFAULT_FRAGMENT_SHADER, DEFAULT_VERTEX_SHADER } from "./shaders";
 
 const VERTEX_SHADER = 0x8b31;
@@ -51,12 +53,56 @@ function createFakeGL() {
   return { gl, sourceOf };
 }
 
-function createCanvas(gl: unknown): HTMLCanvasElement {
+function createCanvas(
+  gl: unknown,
+  clientWidth = 800,
+  clientHeight = 600
+): HTMLCanvasElement {
   return {
     width: 0,
     height: 0,
+    clientWidth,
+    clientHeight,
     getContext: () => gl,
   } as unknown as HTMLCanvasElement;
+}
+
+/**
+ * Size source that reports dimensions on demand and keeps count of the resize
+ * subscriptions still live, which is how the leak in #59 shows up.
+ */
+function createTrackedSize(width = 800, height = 600) {
+  const watched: HTMLCanvasElement[] = [];
+  let callbacks: Array<() => void> = [];
+  let subscriptions = 0;
+
+  const source: CanvasSizeSource = {
+    measure: () => ({ width, height }),
+    watch: (canvas, onResize) => {
+      subscriptions += 1;
+      watched.push(canvas);
+      callbacks.push(onResize);
+      return () => {
+        callbacks = callbacks.filter((callback) => callback !== onResize);
+      };
+    },
+  };
+
+  return {
+    source,
+    watched,
+    get live() {
+      return callbacks.length;
+    },
+    get subscriptions() {
+      return subscriptions;
+    },
+    resizeTo(nextWidth: number, nextHeight: number) {
+      width = nextWidth;
+      height = nextHeight;
+      callbacks.forEach((notify) => notify());
+    },
+  };
 }
 
 describe("initWebGLContext", () => {
@@ -64,12 +110,6 @@ describe("initWebGLContext", () => {
 
   beforeEach(() => {
     clearWebGLContext();
-    // `WebGLContext` still reads `window` to size the canvas (see #59).
-    vi.stubGlobal("window", {
-      innerWidth: 800,
-      innerHeight: 600,
-      addEventListener: vi.fn(),
-    });
     fetchSpy = vi.fn(() => {
       throw new Error("a engine não deve fazer requisições de rede");
     });
@@ -112,11 +152,22 @@ describe("initWebGLContext", () => {
     expect(sourceOf(FRAGMENT_SHADER)).toBe("// só o fragment");
   });
 
-  it("dimensiona o canvas e configura o viewport na criação", () => {
+  it("dimensiona o canvas pelo tamanho do elemento e configura o viewport", () => {
     const { gl } = createFakeGL();
-    const canvas = createCanvas(gl);
+    const canvas = createCanvas(gl, 800, 600);
 
     initWebGLContext(canvas);
+
+    expect(canvas.width).toBe(800);
+    expect(canvas.height).toBe(600);
+    expect(gl.viewport).toHaveBeenCalledWith(0, 0, 800, 600);
+  });
+
+  it("respeita as dimensões fixas em vez do tamanho do elemento", () => {
+    const { gl } = createFakeGL();
+    const canvas = createCanvas(gl, 1920, 1080);
+
+    initWebGLContext(canvas, { size: fixedCanvasSize(800, 600) });
 
     expect(canvas.width).toBe(800);
     expect(canvas.height).toBe(600);
@@ -150,5 +201,78 @@ describe("initWebGLContext", () => {
 
   it("falha ao pedir o contexto antes de inicializar", () => {
     expect(() => getWebGLContext()).toThrow("WebGLContext not initialized");
+  });
+});
+
+describe("observação de tamanho do WebGLContext", () => {
+  beforeEach(() => clearWebGLContext());
+
+  afterEach(() => clearWebGLContext());
+
+  it("reage às mudanças de tamanho notificadas pela fonte", () => {
+    const { gl } = createFakeGL();
+    const canvas = createCanvas(gl);
+    const size = createTrackedSize(800, 600);
+
+    initWebGLContext(canvas, { size: size.source });
+    size.resizeTo(1024, 768);
+
+    expect(canvas.width).toBe(1024);
+    expect(canvas.height).toBe(768);
+    expect(gl.viewport).toHaveBeenLastCalledWith(0, 0, 1024, 768);
+  });
+
+  it("dispose() cancela a observação e pode ser chamado de novo sem efeito", () => {
+    const size = createTrackedSize();
+    const context = new WebGLContext(
+      createCanvas(createFakeGL().gl),
+      size.source
+    );
+
+    expect(size.live).toBe(1);
+
+    context.dispose();
+    context.dispose();
+
+    expect(size.live).toBe(0);
+    expect(size.subscriptions).toBe(1);
+  });
+
+  it("não avisa mais o contexto descartado quando o tamanho muda", () => {
+    const { gl } = createFakeGL();
+    const canvas = createCanvas(gl);
+    const size = createTrackedSize(800, 600);
+    const context = new WebGLContext(canvas, size.source);
+
+    context.dispose();
+    size.resizeTo(1024, 768);
+
+    expect(canvas.width).toBe(800);
+    expect(canvas.height).toBe(600);
+  });
+
+  it("criar e descartar contextos repetidamente não acumula observadores", () => {
+    const size = createTrackedSize();
+
+    for (let i = 0; i < 5; i += 1) {
+      initWebGLContext(createCanvas(createFakeGL().gl), { size: size.source });
+      expect(size.live).toBe(1);
+      clearWebGLContext();
+    }
+
+    expect(size.live).toBe(0);
+    expect(size.subscriptions).toBe(5);
+  });
+
+  it("move a observação para o novo canvas ao reapontar o contexto", () => {
+    const size = createTrackedSize();
+    const firstCanvas = createCanvas(createFakeGL().gl);
+    const secondCanvas = createCanvas(createFakeGL().gl);
+
+    initWebGLContext(firstCanvas, { size: size.source });
+    initWebGLContext(secondCanvas);
+
+    expect(size.live).toBe(1);
+    expect(size.watched).toEqual([firstCanvas, secondCanvas]);
   });
 });

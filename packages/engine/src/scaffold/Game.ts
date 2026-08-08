@@ -2,9 +2,13 @@ import { World } from "../core/base/World";
 import { InputSystem } from "../core/input/InputSystem";
 
 export interface GameConfig {
-  canvasWidth: number;
+  /**
+   * Fixed drawing-buffer size, in pixels. Both are needed to take effect; with
+   * either missing the canvas follows its own layout size instead.
+   */
+  canvasWidth?: number;
 
-  canvasHeight: number;
+  canvasHeight?: number;
 
   debug?: boolean;
 
