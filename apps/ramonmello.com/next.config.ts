@@ -2,13 +2,11 @@ import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: "/admin",
-        destination: "/admin/index.html",
-      },
-    ];
+  // O site é publicado como conteúdo estático no GitHub Pages.
+  output: "export",
+  // Static export não tem servidor para otimizar imagens sob demanda.
+  images: {
+    unoptimized: true,
   },
 };
 
