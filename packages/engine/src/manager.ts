@@ -5,7 +5,11 @@ import {
   KeyboardHandler,
 } from "./core/input/KeyboardInputSystem";
 import { MessageBus } from "./core/messaging/MessageBus";
-import { initWebGLContext, clearWebGLContext } from "./core/rendering/Context";
+import {
+  initWebGLContext,
+  clearWebGLContext,
+  WebGLContextOptions,
+} from "./core/rendering/Context";
 
 export class Manager {
   private static instance: Manager;
@@ -20,6 +24,8 @@ export class Manager {
 
   private isRunning: boolean = false;
 
+  private webglOptions: WebGLContextOptions = {};
+
   static getInstance(): Manager {
     if (!Manager.instance) {
       Manager.instance = new Manager();
@@ -29,9 +35,21 @@ export class Manager {
 
   private constructor() {}
 
-  async rebindCanvas(canvas: HTMLCanvasElement): Promise<void> {
+  /**
+   * Overrides the shaders used when the WebGL context is created. Without it
+   * the engine uses the built-in ones (`DEFAULT_VERTEX_SHADER` /
+   * `DEFAULT_FRAGMENT_SHADER`).
+   *
+   * Must be called before `startGame`: after that the context already exists
+   * and is only recompiled on a `rebindCanvas`.
+   */
+  setShaders(options: WebGLContextOptions): void {
+    this.webglOptions = options;
+  }
+
+  rebindCanvas(canvas: HTMLCanvasElement): void {
     clearWebGLContext();
-    await initWebGLContext(canvas);
+    initWebGLContext(canvas, this.webglOptions);
   }
 
   async startGame(
@@ -41,7 +59,7 @@ export class Manager {
   ): Promise<() => void> {
     if (!this.inputSystem) throw new Error("InputSystem não configurado");
 
-    await initWebGLContext(canvas);
+    initWebGLContext(canvas, this.webglOptions);
 
     if (!this.hasActiveGame()) {
       await game.initialize(undefined, config);

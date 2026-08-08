@@ -1,4 +1,4 @@
-import { KeyboardHandler, type KeyState } from "@engine/index";
+import { type KeyboardHandler, type KeyState } from "@engine/core";
 import { useEffect, useRef } from "react";
 
 export function useKeyboard(): KeyboardHandler {

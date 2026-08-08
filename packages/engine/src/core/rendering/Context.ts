@@ -1,3 +1,13 @@
+import { DEFAULT_FRAGMENT_SHADER, DEFAULT_VERTEX_SHADER } from "./shaders";
+
+export interface WebGLContextOptions {
+  /** Vertex shader GLSL. Defaults to {@link DEFAULT_VERTEX_SHADER}. */
+  vertexShader?: string;
+
+  /** Fragment shader GLSL. Defaults to {@link DEFAULT_FRAGMENT_SHADER}. */
+  fragmentShader?: string;
+}
+
 export class WebGLContext {
   public gl: WebGLRenderingContext;
   public canvas: HTMLCanvasElement;
@@ -64,16 +74,23 @@ export class WebGLContext {
 
 let ctx: WebGLContext | null = null;
 
-export async function initWebGLContext(
-  canvasEl: HTMLCanvasElement
-): Promise<WebGLContext> {
+/**
+ * Creates the global WebGL context, or reuses the existing one.
+ *
+ * Shaders are compiled on creation only; on an existing context the call just
+ * rebinds the canvas and `options` is ignored. To recompile with different
+ * shaders, call {@link clearWebGLContext} first.
+ */
+export function initWebGLContext(
+  canvasEl: HTMLCanvasElement,
+  options: WebGLContextOptions = {}
+): WebGLContext {
   if (!ctx) {
     ctx = new WebGLContext(canvasEl);
-    const [vs, fs] = await Promise.all([
-      fetch("/shaders/vertex.glsl").then((r) => r.text()),
-      fetch("/shaders/fragment.glsl").then((r) => r.text()),
-    ]);
-    ctx.initShaders(vs, fs);
+    ctx.initShaders(
+      options.vertexShader ?? DEFAULT_VERTEX_SHADER,
+      options.fragmentShader ?? DEFAULT_FRAGMENT_SHADER
+    );
   } else {
     ctx.canvas = canvasEl;
     ctx.resizeCanvas();

@@ -17,7 +17,7 @@ export function GameWrapper() {
       const manager = Manager.getInstance();
       manager.setInputHandler(keyboard);
       if (manager.hasActiveGame()) {
-        await manager.rebindCanvas(canvasRef.current!);
+        manager.rebindCanvas(canvasRef.current!);
         manager.resumeGame();
       } else {
         await manager.startGame(asteroidsGame, canvasRef.current!);
