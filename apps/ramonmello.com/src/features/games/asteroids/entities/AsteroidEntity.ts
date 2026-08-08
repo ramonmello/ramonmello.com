@@ -60,9 +60,11 @@ export function createAsteroidEntity(size = 30): Entity {
     new PhysicsComponent(
       /* friction */ 1,
       /* wrapAroundEdges */ true,
-      /* angularVelocity */ (Math.random() - 0.5) * 0.02,
+      /* mass */ 1,
       /* maxSpeed */ speed
-    ).setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed)
+    )
+      .setAngularVelocity((Math.random() - 0.5) * 0.02)
+      .setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed)
   );
 
   /* Collider */
