@@ -24,7 +24,6 @@
       "@about/*": ["./src/features/about/*"],
       "@home/*": ["./src/features/home/*"],
       "@shared/*": ["./src/shared/*"],
-      "@engine/*": ["./src/features/engine/*"],
       "@games/*": ["./src/features/games/*"]
     }
   },

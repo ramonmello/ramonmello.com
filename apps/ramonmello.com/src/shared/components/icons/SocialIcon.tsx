@@ -1,4 +1,4 @@
-import { SocialPlatform } from "@/src/shared/model/types";
+import { SocialPlatform } from "@shared/model/types";
 import { GitHubIcon } from "./GitHubIcon";
 import { LinkedInIcon } from "./LinkedInIcon";
 

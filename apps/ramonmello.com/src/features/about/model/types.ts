@@ -1,11 +1,5 @@
 import type { Tag, SocialNetwork } from "@shared/model/types";
 
-export type AboutVM = {
-  profile: Profile;
-  experiences: Experience[];
-  projects: Project[];
-};
-
 export type Profile = {
   avatar: string;
   name: string;

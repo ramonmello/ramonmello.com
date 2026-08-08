@@ -18,15 +18,15 @@ Neste repositório você encontrará meu **site de portfólio pessoal** desenvol
 
 ```
 / (raiz)
-├── app/            # Páginas e rotas (Next.js)
-├── components/     # Componentes React
-├── hooks/          # Custom Hooks React
-├── engine/         # Game Engine 2D em TypeScript (ECS)
-├── games/          # Jogos criados com a Game Engine
-└── tina/           # Configurações e schemas do Tina CMS
+├── apps/
+│   └── ramonmello.com/    # Site em Next.js
+├── packages/
+│   └── engine/            # Game Engine 2D em TypeScript (ECS)
+├── pnpm-workspace.yaml    # Configuração do workspace PNPM
+└── pnpm-lock.yaml         # Lockfile único do projeto
 ```
 
-> 🗂️ A pasta `engine/` será extraída para um repositório próprio quando atingir maturidade.
+> 🗂️ O pacote `packages/engine/` será extraído para um repositório próprio quando atingir maturidade.
 
 ## Tecnologias Utilizadas
 
@@ -45,13 +45,15 @@ Neste repositório você encontrará meu **site de portfólio pessoal** desenvol
    ```
 2. Instale as dependências:
    ```bash
-   npm install
+   pnpm install
    ```
 3. Inicie o servidor de desenvolvimento:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 4. Acesse em `http://localhost:3000`
+
+> Este monorepo usa PNPM como gerenciador de pacotes. Use `pnpm-lock.yaml` como lockfile canônico.
 
 ## Como Contribuir
 
@@ -63,5 +65,4 @@ Este é um projeto pessoal, mas **feedback** e **sugestões** são bem-vindas:
 ## Contato
 
 Ramon Mello — [@ramonmello](https://www.linkedin.com/in/ramonmello/) — ramonomello@gmail.com
-
 

@@ -27,8 +27,8 @@ export class AsteroidsGame extends BaseGame {
 
   protected getDefaultConfig(): AsteroidsGameConfig {
     return {
-      canvasWidth: 800,
-      canvasHeight: 600,
+      // No fixed size: the canvas is stretched over the page, so the context
+      // follows the element instead.
       debug: false,
       rotationSpeed: 0.05,
       thrustForce: 0.1,

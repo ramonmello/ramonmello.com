@@ -26,7 +26,7 @@ out/
 *.tsbuildinfo
 
 # Testing
-/coverage
+coverage/
 
 # Misc
 .DS_Store

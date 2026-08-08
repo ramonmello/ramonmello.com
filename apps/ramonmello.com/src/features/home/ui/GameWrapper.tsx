@@ -17,7 +17,7 @@ export function GameWrapper() {
       const manager = Manager.getInstance();
       manager.setInputHandler(keyboard);
       if (manager.hasActiveGame()) {
-        await manager.rebindCanvas(canvasRef.current!);
+        manager.rebindCanvas(canvasRef.current!);
         manager.resumeGame();
       } else {
         await manager.startGame(asteroidsGame, canvasRef.current!);
@@ -31,9 +31,12 @@ export function GameWrapper() {
   }, [keyboard]);
 
   return (
+    // `w-screen h-screen` is what actually stretches the canvas: `inset-0`
+    // leaves a replaced element at its intrinsic size, and the engine sizes its
+    // drawing buffer from the element's layout box.
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 block -z-10 pointer-events-none"
+      className="fixed inset-0 block w-screen h-screen -z-10 pointer-events-none"
     />
   );
 }

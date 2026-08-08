@@ -1,3 +1,20 @@
+import { CanvasSizeSource, elementCanvasSize } from "./canvasSize";
+import { DEFAULT_FRAGMENT_SHADER, DEFAULT_VERTEX_SHADER } from "./shaders";
+
+export interface WebGLContextOptions {
+  /** Vertex shader GLSL. Defaults to {@link DEFAULT_VERTEX_SHADER}. */
+  vertexShader?: string;
+
+  /** Fragment shader GLSL. Defaults to {@link DEFAULT_FRAGMENT_SHADER}. */
+  fragmentShader?: string;
+
+  /**
+   * How the drawing buffer is sized and kept in sync. Defaults to
+   * {@link elementCanvasSize}.
+   */
+  size?: CanvasSizeSource;
+}
+
 export class WebGLContext {
   public gl: WebGLRenderingContext;
   public canvas: HTMLCanvasElement;
@@ -11,20 +28,52 @@ export class WebGLContext {
     u_color: WebGLUniformLocation;
   };
 
-  constructor(canvasElement: HTMLCanvasElement) {
+  private size: CanvasSizeSource;
+
+  private unwatchSize?: () => void;
+
+  constructor(
+    canvasElement: HTMLCanvasElement,
+    size: CanvasSizeSource = elementCanvasSize()
+  ) {
     this.canvas = canvasElement;
     const gl = canvasElement.getContext("webgl");
     if (!gl) throw new Error("WebGL not supported");
     this.gl = gl;
+    this.size = size;
 
-    this.resizeCanvas();
-    window.addEventListener("resize", () => this.resizeCanvas());
+    this.watchCanvas();
   }
 
   public resizeCanvas() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    const { width, height } = this.size.measure(this.canvas);
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.gl.viewport(0, 0, width, height);
+  }
+
+  /** Re-targets the context at another canvas, moving the resize watch with it. */
+  public setCanvas(canvasElement: HTMLCanvasElement) {
+    this.dispose();
+    this.canvas = canvasElement;
+    this.watchCanvas();
+  }
+
+  /**
+   * Stops watching the canvas for resizes. Idempotent, and mandatory before
+   * dropping a context: without it every context keeps a live subscription
+   * holding on to the canvas.
+   */
+  public dispose() {
+    this.unwatchSize?.();
+    this.unwatchSize = undefined;
+  }
+
+  private watchCanvas() {
+    this.resizeCanvas();
+    this.unwatchSize = this.size.watch?.(this.canvas, () =>
+      this.resizeCanvas()
+    );
   }
 
   public initShaders(vertexSource: string, fragmentSource: string) {
@@ -64,19 +113,25 @@ export class WebGLContext {
 
 let ctx: WebGLContext | null = null;
 
-export async function initWebGLContext(
-  canvasEl: HTMLCanvasElement
-): Promise<WebGLContext> {
+/**
+ * Creates the global WebGL context, or reuses the existing one.
+ *
+ * Shaders are compiled on creation only; on an existing context the call just
+ * rebinds the canvas and `options` is ignored. To recompile with different
+ * shaders, call {@link clearWebGLContext} first.
+ */
+export function initWebGLContext(
+  canvasEl: HTMLCanvasElement,
+  options: WebGLContextOptions = {}
+): WebGLContext {
   if (!ctx) {
-    ctx = new WebGLContext(canvasEl);
-    const [vs, fs] = await Promise.all([
-      fetch("/shaders/vertex.glsl").then((r) => r.text()),
-      fetch("/shaders/fragment.glsl").then((r) => r.text()),
-    ]);
-    ctx.initShaders(vs, fs);
+    ctx = new WebGLContext(canvasEl, options.size);
+    ctx.initShaders(
+      options.vertexShader ?? DEFAULT_VERTEX_SHADER,
+      options.fragmentShader ?? DEFAULT_FRAGMENT_SHADER
+    );
   } else {
-    ctx.canvas = canvasEl;
-    ctx.resizeCanvas();
+    ctx.setCanvas(canvasEl);
   }
   return ctx;
 }
@@ -86,6 +141,8 @@ export function getWebGLContext(): WebGLContext {
   return ctx;
 }
 
+/** Disposes the global context, if any, and forgets it. */
 export function clearWebGLContext(): void {
+  ctx?.dispose();
   ctx = null;
 }
