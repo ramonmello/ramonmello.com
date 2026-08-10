@@ -111,38 +111,24 @@ export class WebGLContext {
   }
 }
 
-let ctx: WebGLContext | null = null;
-
 /**
- * Creates the global WebGL context, or reuses the existing one.
+ * Creates a context bound to `canvasEl` and compiles its shaders, falling back
+ * to the built-in ones.
  *
- * Shaders are compiled on creation only; on an existing context the call just
- * rebinds the canvas and `options` is ignored. To recompile with different
- * shaders, call {@link clearWebGLContext} first.
+ * Every call returns a brand-new context: nothing is cached or shared, so a
+ * page may run as many canvases as it likes. Dispose each one with
+ * {@link WebGLContext.dispose} when its canvas goes away.
  */
-export function initWebGLContext(
+export function createWebGLContext(
   canvasEl: HTMLCanvasElement,
   options: WebGLContextOptions = {}
 ): WebGLContext {
-  if (!ctx) {
-    ctx = new WebGLContext(canvasEl, options.size);
-    ctx.initShaders(
-      options.vertexShader ?? DEFAULT_VERTEX_SHADER,
-      options.fragmentShader ?? DEFAULT_FRAGMENT_SHADER
-    );
-  } else {
-    ctx.setCanvas(canvasEl);
-  }
-  return ctx;
-}
+  const context = new WebGLContext(canvasEl, options.size);
 
-export function getWebGLContext(): WebGLContext {
-  if (!ctx) throw new Error("WebGLContext not initialized");
-  return ctx;
-}
+  context.initShaders(
+    options.vertexShader ?? DEFAULT_VERTEX_SHADER,
+    options.fragmentShader ?? DEFAULT_FRAGMENT_SHADER
+  );
 
-/** Disposes the global context, if any, and forgets it. */
-export function clearWebGLContext(): void {
-  ctx?.dispose();
-  ctx = null;
+  return context;
 }

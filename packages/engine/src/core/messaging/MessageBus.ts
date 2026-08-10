@@ -2,18 +2,13 @@ export type MessageData = Record<string, unknown>;
 
 export type MessageHandler = (data: MessageData) => void;
 
+/**
+ * Publish/subscribe hub. Each instance is an isolated namespace: a `World`
+ * owns one, so clearing or destroying a world never reaches another one's
+ * subscribers.
+ */
 export class MessageBus {
-  private static instance: MessageBus;
   private listeners: Map<string, Set<MessageHandler>> = new Map();
-
-  static getInstance(): MessageBus {
-    if (!MessageBus.instance) {
-      MessageBus.instance = new MessageBus();
-    }
-    return MessageBus.instance;
-  }
-
-  private constructor() {}
 
   on(messageType: string, handler: MessageHandler): () => void {
     if (!this.listeners.has(messageType)) {
@@ -44,6 +39,7 @@ export class MessageBus {
     this.listeners.delete(messageType);
   }
 
+  /** Drops every subscription on this bus. Other buses are untouched. */
   clearAllListeners(): void {
     this.listeners.clear();
   }

@@ -64,7 +64,7 @@ export class AsteroidsGame extends BaseGame {
   }
 
   private createShip(): void {
-    this.shipEntity = createShipEntity();
+    this.shipEntity = createShipEntity(this.world.getViewport());
     this.world.addEntity(this.shipEntity);
   }
 

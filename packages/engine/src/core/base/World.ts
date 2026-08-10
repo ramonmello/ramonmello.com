@@ -5,11 +5,37 @@ import {
   MessageData,
   MessageHandler,
 } from "../messaging/MessageBus";
+import type { CanvasSize } from "../rendering/canvasSize";
+import type { WebGLContext } from "../rendering/Context";
+
+export interface WorldOptions {
+  /** Bus to share with another world. Defaults to a fresh, private one. */
+  messageBus?: MessageBus;
+
+  /** Surface the rendering systems draw to. Absent means headless. */
+  renderContext?: WebGLContext;
+}
 
 /**
- * Orchestrates entities, systems, and global messaging for the application.
+ * Orchestrates entities, systems, and messaging for one running game.
+ *
+ * Everything a system may reach for at runtime hangs off the world instance —
+ * the message bus and the render context included — so two worlds can run side
+ * by side without sharing anything.
  */
 export class World {
+  /**
+   * Message bus scoped to this world.
+   * @private
+   */
+  private readonly messageBus: MessageBus;
+
+  /**
+   * Render surface handed to the rendering systems, when there is one.
+   * @private
+   */
+  private renderContext?: WebGLContext;
+
   /**
    * Map of all entities keyed by their unique IDs.
    * @private
@@ -40,13 +66,51 @@ export class World {
    */
   private running: boolean = false;
 
+  constructor(options: WorldOptions = {}) {
+    this.messageBus = options.messageBus ?? new MessageBus();
+    this.renderContext = options.renderContext;
+  }
+
   /**
-   * Adds an entity to the world and emits an 'entityAdded' event.
+   * Returns the bus every entity and system of this world publishes on.
+   */
+  getMessageBus(): MessageBus {
+    return this.messageBus;
+  }
+
+  /**
+   * Points the world at a render surface, or at nothing to go headless.
+   * @param renderContext - The context the rendering systems should draw to.
+   */
+  setRenderContext(renderContext?: WebGLContext): void {
+    this.renderContext = renderContext;
+  }
+
+  /**
+   * Returns the render surface, or undefined when the world runs headless.
+   */
+  getRenderContext(): WebGLContext | undefined {
+    return this.renderContext;
+  }
+
+  /**
+   * Drawing-buffer size of the render surface. A headless world reports
+   * zeroes, which callers should read as "no bounds to play against".
+   */
+  getViewport(): CanvasSize {
+    const canvas = this.renderContext?.canvas;
+    return { width: canvas?.width ?? 0, height: canvas?.height ?? 0 };
+  }
+
+  /**
+   * Adds an entity to the world, wires it to the world's bus, and emits an
+   * 'entityAdded' event.
    * @param entity - The entity instance to add.
    * @returns The world instance for method chaining.
    */
   addEntity(entity: Entity): World {
     this.entities.set(entity.id, entity);
+    entity.setMessageBus(this.messageBus);
     this.emit("entityAdded", { entity });
     return this;
   }
@@ -97,25 +161,26 @@ export class World {
   }
 
   /**
-   * Emits a global message via the MessageBus with world context.
+   * Emits a message on this world's bus, with world context attached.
    * @param messageType - Identifier for the message type.
    * @param data - Optional payload to include with the message.
    */
   emit(messageType: string, data: MessageData = {}): void {
-    MessageBus.getInstance().emit(messageType, {
+    this.messageBus.emit(messageType, {
       world: this,
       ...data,
     });
   }
 
   /**
-   * Subscribes to a global message and stores its disposer for later cleanup.
+   * Subscribes to a message on this world's bus and stores its disposer for
+   * later cleanup.
    * @param messageType - Identifier for the message type to listen for.
    * @param handler - Callback invoked when the message is received.
    * @returns The world instance for method chaining.
    */
   on(messageType: string, handler: MessageHandler): World {
-    const disposer = MessageBus.getInstance().on(messageType, handler);
+    const disposer = this.messageBus.on(messageType, handler);
     this.messageDisposers.push(disposer);
     return this;
   }
@@ -198,12 +263,15 @@ export class World {
   }
 
   /**
-   * Stops and clears the world, emits 'worldDestroyed', and clears all global listeners.
+   * Stops and clears the world, emits 'worldDestroyed', and wipes this world's
+   * bus — including subscriptions taken out directly on it. Other worlds keep
+   * their own listeners.
    */
   destroy(): void {
     this.stop();
     this.clear();
     this.emit("worldDestroyed", {});
-    MessageBus.getInstance().clearAllListeners();
+    this.messageBus.clearAllListeners();
+    this.renderContext = undefined;
   }
 }

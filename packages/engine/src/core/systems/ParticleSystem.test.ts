@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Entity } from "../base/Entity";
 import { World } from "../base/World";
-import { MessageBus } from "../messaging/MessageBus";
 import { ParticleEmitterComponent } from "../components/ParticleEmitterComponent";
 import { TransformComponent } from "../components/TransformComponent";
 import type { EmitterConfig } from "../rendering/particles";
@@ -65,7 +64,6 @@ describe("ParticleSystem", () => {
   let world: World;
 
   beforeEach(() => {
-    MessageBus.getInstance().clearAllListeners();
     world = new World();
     system = new ParticleSystem();
     system.setWorld(world);

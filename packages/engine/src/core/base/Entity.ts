@@ -26,6 +26,20 @@ export class Entity {
   name?: string;
 
   /**
+   * Bus this entity publishes on, assigned by {@link World.addEntity}.
+   */
+  private messageBus?: MessageBus;
+
+  /**
+   * Subscriptions taken out on this entity, kept so they can be re-registered
+   * when the entity is attached to a bus (or moved to another one).
+   */
+  private subscriptions: Array<{
+    messageType: string;
+    handler: MessageHandler;
+  }> = [];
+
+  /**
    * Internal disposers for message subscriptions to allow cleanup.
    */
   private messageDisposers: Array<() => void> = [];
@@ -96,12 +110,38 @@ export class Entity {
   }
 
   /**
-   * Emits a message from this entity through the global MessageBus.
+   * Attaches this entity to a bus, moving any subscription it already holds
+   * over to it. Called by {@link World.addEntity}; passing undefined detaches.
+   * @param messageBus - The bus to publish and subscribe on.
+   */
+  setMessageBus(messageBus?: MessageBus): void {
+    if (messageBus === this.messageBus) return;
+
+    this.disposeSubscriptions();
+    this.messageBus = messageBus;
+
+    if (messageBus) {
+      this.messageDisposers = this.subscriptions.map(({ messageType, handler }) =>
+        messageBus.on(messageType, handler)
+      );
+    }
+  }
+
+  /**
+   * Returns the bus this entity is attached to, if any.
+   */
+  getMessageBus(): MessageBus | undefined {
+    return this.messageBus;
+  }
+
+  /**
+   * Emits a message on the bus this entity is attached to. A detached entity
+   * has nobody to talk to, so the call is a no-op.
    * @param messageType - Identifier for the message type.
    * @param data - Optional payload to include with the message.
    */
   emit(messageType: string, data: MessageData = {}): void {
-    MessageBus.getInstance().emit(messageType, {
+    this.messageBus?.emit(messageType, {
       entity: this,
       entityId: this.id,
       entityName: this.name,
@@ -110,14 +150,20 @@ export class Entity {
   }
 
   /**
-   * Subscribes to a message type for this entity and stores the disposer.
+   * Subscribes to a message type for this entity. Subscribing before the
+   * entity joins a world is allowed: the handler is registered as soon as a
+   * bus is attached.
    * @param messageType - Identifier for the message type to listen for.
    * @param handler - Callback invoked when the message is received.
    * @returns This entity, for method chaining.
    */
   on(messageType: string, handler: MessageHandler): Entity {
-    const disposer = MessageBus.getInstance().on(messageType, handler);
-    this.messageDisposers.push(disposer);
+    this.subscriptions.push({ messageType, handler });
+
+    if (this.messageBus) {
+      this.messageDisposers.push(this.messageBus.on(messageType, handler));
+    }
+
     return this;
   }
 
@@ -125,12 +171,13 @@ export class Entity {
    * Clears all message subscriptions for this entity.
    */
   clearAllListeners(): void {
-    this.messageDisposers.forEach((disposer) => disposer());
-    this.messageDisposers = [];
+    this.disposeSubscriptions();
+    this.subscriptions = [];
   }
 
   /**
-   * Destroys this entity by removing all components and clearing listeners.
+   * Destroys this entity by removing all components, clearing listeners, and
+   * detaching from its bus.
    */
   destroy(): void {
     Array.from(this.components.keys()).forEach((type) => {
@@ -138,5 +185,11 @@ export class Entity {
     });
 
     this.clearAllListeners();
+    this.messageBus = undefined;
+  }
+
+  private disposeSubscriptions(): void {
+    this.messageDisposers.forEach((disposer) => disposer());
+    this.messageDisposers = [];
   }
 }

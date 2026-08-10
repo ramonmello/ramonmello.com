@@ -1,19 +1,17 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { Entity } from "../base/Entity";
 import { World } from "../base/World";
-import { MessageBus } from "../messaging/MessageBus";
 import { PhysicsComponent } from "../components/PhysicsComponent";
 import { TransformComponent } from "../components/TransformComponent";
 import { PhysicsSystem } from "./PhysicsSystem";
 import { TARGET_FPS } from "../config/time";
+import type { WebGLContext } from "../rendering/Context";
 
 const CANVAS = { width: 800, height: 600 };
 
-// O PhysicsSystem lê as dimensões do canvas do contexto WebGL global só para
-// fazer o wrap nas bordas. Mockar aqui mantém o teste sem DOM e sem GPU.
-vi.mock("../rendering/Context", () => ({
-  getWebGLContext: () => ({ canvas: CANVAS }),
-}));
+// O sistema só olha o canvas para fazer o wrap nas bordas, então um contexto
+// com nada além dele basta — o teste segue sem DOM e sem GPU.
+const RENDER_CONTEXT = { canvas: CANVAS } as unknown as WebGLContext;
 
 /** Um frame exato a 60fps, onde `timeScale` vale 1. */
 const ONE_FRAME = 1 / TARGET_FPS;
@@ -34,9 +32,8 @@ describe("PhysicsSystem", () => {
   let system: PhysicsSystem;
 
   beforeEach(() => {
-    MessageBus.getInstance().clearAllListeners();
     system = new PhysicsSystem();
-    system.setWorld(new World());
+    system.setWorld(new World({ renderContext: RENDER_CONTEXT }));
   });
 
   describe("integração", () => {
@@ -172,6 +169,18 @@ describe("PhysicsSystem", () => {
       const { entity, transform } = makeBody(physics, 5, 5);
 
       system.update([entity], ONE_FRAME);
+
+      expect(transform.position.x).toBeCloseTo(-15);
+    });
+
+    it("num world headless não há bordas para envolver", () => {
+      const headless = new PhysicsSystem();
+      headless.setWorld(new World());
+      const physics = new PhysicsComponent(1, true);
+      physics.setVelocity(-20, 0);
+      const { entity, transform } = makeBody(physics, 5, 5);
+
+      headless.update([entity], ONE_FRAME);
 
       expect(transform.position.x).toBeCloseTo(-15);
     });

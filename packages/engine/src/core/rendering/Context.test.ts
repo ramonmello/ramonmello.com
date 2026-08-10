@@ -1,10 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  clearWebGLContext,
-  getWebGLContext,
-  initWebGLContext,
-  WebGLContext,
-} from "./Context";
+import { createWebGLContext, WebGLContext } from "./Context";
 import { CanvasSizeSource, fixedCanvasSize } from "./canvasSize";
 import { DEFAULT_FRAGMENT_SHADER, DEFAULT_VERTEX_SHADER } from "./shaders";
 
@@ -105,11 +100,10 @@ function createTrackedSize(width = 800, height = 600) {
   };
 }
 
-describe("initWebGLContext", () => {
+describe("createWebGLContext", () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    clearWebGLContext();
     fetchSpy = vi.fn(() => {
       throw new Error("a engine não deve fazer requisições de rede");
     });
@@ -117,14 +111,13 @@ describe("initWebGLContext", () => {
   });
 
   afterEach(() => {
-    clearWebGLContext();
     vi.unstubAllGlobals();
   });
 
   it("compila os shaders embutidos sem tocar na rede", () => {
     const { gl, sourceOf } = createFakeGL();
 
-    initWebGLContext(createCanvas(gl));
+    createWebGLContext(createCanvas(gl));
 
     expect(sourceOf(VERTEX_SHADER)).toBe(DEFAULT_VERTEX_SHADER);
     expect(sourceOf(FRAGMENT_SHADER)).toBe(DEFAULT_FRAGMENT_SHADER);
@@ -134,7 +127,7 @@ describe("initWebGLContext", () => {
   it("aceita shaders customizados pela config", () => {
     const { gl, sourceOf } = createFakeGL();
 
-    initWebGLContext(createCanvas(gl), {
+    createWebGLContext(createCanvas(gl), {
       vertexShader: "// vertex custom",
       fragmentShader: "// fragment custom",
     });
@@ -146,7 +139,7 @@ describe("initWebGLContext", () => {
   it("permite substituir só um dos dois, mantendo o outro embutido", () => {
     const { gl, sourceOf } = createFakeGL();
 
-    initWebGLContext(createCanvas(gl), { fragmentShader: "// só o fragment" });
+    createWebGLContext(createCanvas(gl), { fragmentShader: "// só o fragment" });
 
     expect(sourceOf(VERTEX_SHADER)).toBe(DEFAULT_VERTEX_SHADER);
     expect(sourceOf(FRAGMENT_SHADER)).toBe("// só o fragment");
@@ -156,7 +149,7 @@ describe("initWebGLContext", () => {
     const { gl } = createFakeGL();
     const canvas = createCanvas(gl, 800, 600);
 
-    initWebGLContext(canvas);
+    createWebGLContext(canvas);
 
     expect(canvas.width).toBe(800);
     expect(canvas.height).toBe(600);
@@ -167,54 +160,43 @@ describe("initWebGLContext", () => {
     const { gl } = createFakeGL();
     const canvas = createCanvas(gl, 1920, 1080);
 
-    initWebGLContext(canvas, { size: fixedCanvasSize(800, 600) });
+    createWebGLContext(canvas, { size: fixedCanvasSize(800, 600) });
 
     expect(canvas.width).toBe(800);
     expect(canvas.height).toBe(600);
     expect(gl.viewport).toHaveBeenCalledWith(0, 0, 800, 600);
   });
 
-  it("reaproveita o contexto existente, apenas reapontando o canvas", () => {
+  /**
+   * Critério de aceite de #62: sem singleton de módulo, cada canvas ganha o
+   * seu contexto e os dois coexistem com shaders próprios.
+   */
+  it("cria um contexto novo e independente por canvas", () => {
     const first = createFakeGL();
-    const context = initWebGLContext(createCanvas(first.gl));
-
+    const firstCanvas = createCanvas(first.gl);
     const second = createFakeGL();
     const secondCanvas = createCanvas(second.gl);
-    const reused = initWebGLContext(secondCanvas, {
-      vertexShader: "// ignorado num contexto já criado",
+
+    const a = createWebGLContext(firstCanvas);
+    const b = createWebGLContext(secondCanvas, {
+      vertexShader: "// só do segundo",
     });
 
-    expect(reused).toBe(context);
-    expect(reused.canvas).toBe(secondCanvas);
-    expect(second.sourceOf(VERTEX_SHADER)).toBeUndefined();
-  });
-
-  it("recompila com os novos shaders depois de clearWebGLContext", () => {
-    initWebGLContext(createCanvas(createFakeGL().gl));
-    clearWebGLContext();
-
-    const { gl, sourceOf } = createFakeGL();
-    initWebGLContext(createCanvas(gl), { vertexShader: "// recompilado" });
-
-    expect(sourceOf(VERTEX_SHADER)).toBe("// recompilado");
-  });
-
-  it("falha ao pedir o contexto antes de inicializar", () => {
-    expect(() => getWebGLContext()).toThrow("WebGLContext not initialized");
+    expect(a).not.toBe(b);
+    expect(a.canvas).toBe(firstCanvas);
+    expect(b.canvas).toBe(secondCanvas);
+    expect(first.sourceOf(VERTEX_SHADER)).toBe(DEFAULT_VERTEX_SHADER);
+    expect(second.sourceOf(VERTEX_SHADER)).toBe("// só do segundo");
   });
 });
 
 describe("observação de tamanho do WebGLContext", () => {
-  beforeEach(() => clearWebGLContext());
-
-  afterEach(() => clearWebGLContext());
-
   it("reage às mudanças de tamanho notificadas pela fonte", () => {
     const { gl } = createFakeGL();
     const canvas = createCanvas(gl);
     const size = createTrackedSize(800, 600);
 
-    initWebGLContext(canvas, { size: size.source });
+    createWebGLContext(canvas, { size: size.source });
     size.resizeTo(1024, 768);
 
     expect(canvas.width).toBe(1024);
@@ -255,9 +237,11 @@ describe("observação de tamanho do WebGLContext", () => {
     const size = createTrackedSize();
 
     for (let i = 0; i < 5; i += 1) {
-      initWebGLContext(createCanvas(createFakeGL().gl), { size: size.source });
+      const context = createWebGLContext(createCanvas(createFakeGL().gl), {
+        size: size.source,
+      });
       expect(size.live).toBe(1);
-      clearWebGLContext();
+      context.dispose();
     }
 
     expect(size.live).toBe(0);
@@ -268,11 +252,28 @@ describe("observação de tamanho do WebGLContext", () => {
     const size = createTrackedSize();
     const firstCanvas = createCanvas(createFakeGL().gl);
     const secondCanvas = createCanvas(createFakeGL().gl);
+    const context = createWebGLContext(firstCanvas, { size: size.source });
 
-    initWebGLContext(firstCanvas, { size: size.source });
-    initWebGLContext(secondCanvas);
+    context.setCanvas(secondCanvas);
 
     expect(size.live).toBe(1);
     expect(size.watched).toEqual([firstCanvas, secondCanvas]);
+  });
+
+  it("dois contextos vivos observam cada um o seu canvas", () => {
+    const size = createTrackedSize();
+    const firstCanvas = createCanvas(createFakeGL().gl);
+    const secondCanvas = createCanvas(createFakeGL().gl);
+
+    const a = createWebGLContext(firstCanvas, { size: size.source });
+    const b = createWebGLContext(secondCanvas, { size: size.source });
+
+    expect(size.live).toBe(2);
+
+    a.dispose();
+    expect(size.live).toBe(1);
+
+    b.dispose();
+    expect(size.live).toBe(0);
   });
 });

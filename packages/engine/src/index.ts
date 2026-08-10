@@ -9,4 +9,4 @@ export * from "./core/input";
 export * from "./scaffold/BaseGame";
 export * from "./scaffold/Game";
 
-export * from "./manager";
+export * from "./Engine";

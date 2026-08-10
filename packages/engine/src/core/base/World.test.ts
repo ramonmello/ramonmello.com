@@ -5,6 +5,7 @@ import { System } from "./System";
 import { World } from "./World";
 import { MessageBus } from "../messaging/MessageBus";
 import { WORLD_EVENTS } from "../messaging/MessageTypes";
+import type { WebGLContext } from "../rendering/Context";
 
 class TagComponent extends Component {
   static readonly TYPE = "tag";
@@ -44,11 +45,15 @@ function entityWith(id: string, ...components: Component[]): Entity {
   return entity;
 }
 
+/** Só o canvas importa: é dele que o world tira o viewport. */
+function renderContextWith(width: number, height: number): WebGLContext {
+  return { canvas: { width, height } } as unknown as WebGLContext;
+}
+
 describe("World", () => {
   let world: World;
 
   beforeEach(() => {
-    MessageBus.getInstance().clearAllListeners();
     world = new World();
   });
 
@@ -274,20 +279,88 @@ describe("World", () => {
       expect(world.getElapsedTime()).toBe(0.5);
     });
 
-    /**
-     * Caracterização de um risco conhecido: destroy() limpa o MessageBus
-     * global inteiro, e não apenas as inscrições deste World. Com dois mundos
-     * simultâneos, destruir um deixa o outro surdo.
-     */
-    it("destroy limpa o MessageBus global, inclusive de outros mundos", () => {
+    it("destroy limpa o barramento do próprio world", () => {
+      const handler = vi.fn();
+      world.getMessageBus().on("evento-solto", handler);
+
+      world.destroy();
+      world.getMessageBus().emit("evento-solto", {});
+
+      expect(handler).not.toHaveBeenCalled();
+    });
+  });
+
+  /**
+   * O critério de aceite de #62: dois mundos simultâneos não podem se ouvir
+   * nem se atrapalhar. Antes o barramento era um singleton de processo e um
+   * destroy() deixava o outro mundo surdo.
+   */
+  describe("isolamento entre mundos", () => {
+    it("cada world tem o seu próprio barramento", () => {
+      const other = new World();
+
+      expect(world.getMessageBus()).not.toBe(other.getMessageBus());
+    });
+
+    it("um evento de um world não chega aos inscritos do outro", () => {
+      const other = new World();
+      const handler = vi.fn();
+      other.on("tick", handler);
+
+      world.emit("tick", {});
+
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it("destroy de um world não derruba as inscrições do outro", () => {
       const other = new World();
       const handler = vi.fn();
       other.on("evento-do-outro-mundo", handler);
 
       world.destroy();
-      MessageBus.getInstance().emit("evento-do-outro-mundo", {});
+      other.emit("evento-do-outro-mundo", {});
 
-      expect(handler).not.toHaveBeenCalled();
+      expect(handler).toHaveBeenCalledOnce();
+    });
+
+    it("entidades emitem no barramento do world que as recebeu", () => {
+      const other = new World();
+      const here = vi.fn();
+      const there = vi.fn();
+      world.on("shoot", here);
+      other.on("shoot", there);
+      const entity = entityWith("player");
+
+      other.addEntity(entity);
+      entity.emit("shoot", {});
+
+      expect(there).toHaveBeenCalledOnce();
+      expect(here).not.toHaveBeenCalled();
+    });
+
+    it("aceita um barramento compartilhado quando dois mundos devem se ouvir", () => {
+      const shared = new MessageBus();
+      const a = new World({ messageBus: shared });
+      const b = new World({ messageBus: shared });
+      const handler = vi.fn();
+      b.on("tick", handler);
+
+      a.emit("tick", {});
+
+      expect(handler).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("contexto de renderização", () => {
+    it("sem contexto o viewport é zerado (mundo headless)", () => {
+      expect(world.getRenderContext()).toBeUndefined();
+      expect(world.getViewport()).toEqual({ width: 0, height: 0 });
+    });
+
+    it("reporta o tamanho do drawing buffer do contexto", () => {
+      world.setRenderContext(renderContextWith(800, 600));
+
+      expect(world.getViewport()).toEqual({ width: 800, height: 600 });
     });
   });
 });

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { Entity } from "../base/Entity";
 import { World } from "../base/World";
-import { MessageBus, type MessageData } from "../messaging/MessageBus";
+import { type MessageData } from "../messaging/MessageBus";
 import { ColliderComponent, ColliderType } from "../components/ColliderComponent";
 import { TransformComponent } from "../components/TransformComponent";
 import { COLLISION_EVENTS } from "../messaging/MessageTypes";
@@ -25,7 +25,6 @@ describe("CollisionSystem", () => {
   let onResolve: Mock<(data: MessageData) => void>;
 
   beforeEach(() => {
-    MessageBus.getInstance().clearAllListeners();
     world = new World();
     system = new CollisionSystem();
     system.setWorld(world);

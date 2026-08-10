@@ -51,10 +51,15 @@ import { World, Entity, System, TransformComponent } from "@engine/core";
 | **Component**    | Só dados. Cada classe expõe um `type` (string) e um `static TYPE` usado para buscar e declarar dependências. |
 | **System**       | Só lógica. Declara `componentTypes`, tem `priority` (menor roda antes) e um `enabled`.                       |
 | **World**        | Guarda entidades e sistemas. A cada `update(deltaTime)` roda os sistemas em ordem de prioridade, passando para cada um apenas as entidades que têm todos os `componentTypes` exigidos. |
-| **MessageBus**   | Publish/subscribe global por string. `World` e `Entity` têm `emit`/`on` que delegam para ele.                |
+| **MessageBus**   | Publish/subscribe por string. Cada `World` tem o seu, e `World` e `Entity` delegam `emit`/`on` para ele.     |
+| **Engine**       | Amarra um canvas, um jogo e uma fonte de input. Cria o contexto WebGL e roda o loop de `requestAnimationFrame`. |
 
 O `World` não roda sozinho: alguém precisa chamar `update` a cada frame. Quem faz
-isso por você é o `Manager` (ver [Uso básico](#uso-básico)).
+isso por você é a `Engine` (ver [Uso básico](#uso-básico)).
+
+Nada disso é global: uma `Engine` por canvas, um `MessageBus` por `World`, um
+`WebGLContext` por canvas. Dois jogos podem coexistir no mesmo documento sem se
+enxergar.
 
 ## Uso básico
 
@@ -153,27 +158,36 @@ fica travado nesse tamanho; sem eles, o canvas segue o próprio tamanho de layou
 
 ### 3. Ligando no host
 
-O `Manager` é quem cria o contexto WebGL e roda o loop de
-`requestAnimationFrame`. O input precisa ser configurado **antes** do
-`startGame`, senão ele lança:
+A `Engine` é quem cria o contexto WebGL e roda o loop de
+`requestAnimationFrame`. Tudo que ela precisa entra pelo construtor:
 
 ```ts
-import { KeyboardHandler, Manager } from "@engine/core";
+import { Engine, KeyboardHandler, KeyboardInputSystem } from "@engine/core";
 
-export async function mount(canvas: HTMLCanvasElement) {
+export function mount(canvas: HTMLCanvasElement) {
   const pressed: Record<string, boolean> = {};
   window.addEventListener("keydown", (e) => (pressed[e.code] = true));
   window.addEventListener("keyup", (e) => (pressed[e.code] = false));
 
   const keyboard: KeyboardHandler = { getState: () => ({ ...pressed }) };
 
-  const manager = Manager.getInstance();
-  manager.setInputHandler(keyboard);
+  const engine = new Engine({
+    canvas,
+    game: new DriftingBalls(),
+    input: new KeyboardInputSystem(keyboard),
+  });
 
-  // Devolve uma função que pausa o jogo — útil no cleanup do host.
-  return manager.startGame(new DriftingBalls(), canvas);
+  void engine.start();
+
+  // Derruba o loop, o mundo e o contexto — use no cleanup do host.
+  return () => engine.destroy();
 }
 ```
+
+`start()` inicializa o jogo na primeira chamada e apenas retoma nas seguintes,
+então chamá-la duas vezes (ou em paralelo) não duplica sistemas nem entidades.
+`pause()`/`resume()` param e retomam o loop, e `setCanvas()` move a run para
+outro elemento, recompilando o contexto.
 
 Dentro dos sistemas, o estado do teclado chega normalizado pelo
 `KeyboardInputSystem`: `getDirection()` devolve `{ x, y }` a partir das setas e
@@ -190,37 +204,37 @@ Colisão não é resolvida pela engine: ela detecta e avisa. Quem decide o que
 acontece é o jogo.
 
 ```ts
-import { COLLISION_EVENTS, Entity, MessageBus, World } from "@engine/core";
+import { COLLISION_EVENTS, Entity, World } from "@engine/core";
 
-const unsubscribe = MessageBus.getInstance().on(
-  COLLISION_EVENTS.DETECT,
-  (data) => {
-    const { entityA, entityB, world } = data as {
-      entityA: Entity;
-      entityB: Entity;
-      world: World;
-    };
+const unsubscribe = world.getMessageBus().on(COLLISION_EVENTS.DETECT, (data) => {
+  const { entityA, entityB, world } = data as {
+    entityA: Entity;
+    entityB: Entity;
+    world: World;
+  };
 
-    world.removeEntity(entityB.id);
-    entityA.emit("scoreChanged", { points: 100 });
-  }
-);
+  world.removeEntity(entityB.id);
+  entityA.emit("scoreChanged", { points: 100 });
+});
 
 unsubscribe();
 ```
 
 O cast é necessário: o payload trafega como `Record<string, unknown>`.
 
+Dentro de um sistema, prefira `world.on(...)`: o disposer fica com o `World` e
+cai junto no `clear()`/`destroy()`, em vez de sobreviver solto no barramento.
+
 ### 5. Contexto WebGL e shaders
 
-Normalmente o `Manager` cuida disso, mas o contexto pode ser criado na mão —
+Normalmente a `Engine` cuida disso, mas o contexto pode ser criado na mão —
 útil em testes ou para rodar só o `RenderSystem`:
 
 ```ts
-import { fixedCanvasSize, initWebGLContext } from "@engine/core";
+import { createWebGLContext, fixedCanvasSize } from "@engine/core";
 
-export function setup(canvas: HTMLCanvasElement) {
-  initWebGLContext(canvas, {
+export function setup(canvas: HTMLCanvasElement, world: World) {
+  const context = createWebGLContext(canvas, {
     size: fixedCanvasSize(800, 600),
     fragmentShader: `precision mediump float;
 uniform vec4 u_color;
@@ -230,12 +244,18 @@ void main() {
 }
 `,
   });
+
+  world.setRenderContext(context);
+  return context;
 }
 ```
 
-Os shaders são compilados só na criação do contexto; para trocá-los depois é
-preciso chamar `clearWebGLContext()` antes. Pelo `Manager`, o equivalente é
-`manager.setShaders({ ... })` antes do `startGame`. Qualquer shader próprio
+O contexto só chega aos sistemas de render pelo `World`:
+`world.setRenderContext(context)`. Um mundo sem contexto roda headless — os
+sistemas de render viram no-op e `getViewport()` devolve zeros.
+
+Os shaders são compilados na criação do contexto; para trocá-los, crie outro
+(pela `Engine`, é a opção `shaders` do construtor). Qualquer shader próprio
 precisa manter o atributo `a_position` e os uniforms `u_resolution`,
 `u_translation`, `u_rotation` e `u_color`, que é o que os sistemas de render
 alimentam.
@@ -272,17 +292,21 @@ Asteroids, o controle da nave usa `priority = 1` para rodar antes da física.
 
 ### Rendering
 
-- `initWebGLContext(canvas, options?)` — cria (ou reaproveita) o contexto global.
-- `getWebGLContext()` — recupera o contexto; lança se não houver um.
-- `clearWebGLContext()` — descarta o contexto e solta o `ResizeObserver`.
+- `createWebGLContext(canvas, options?)` — cria um contexto novo e compila os
+  shaders. Nada é cacheado: um canvas, um contexto.
+- `context.dispose()` — solta o `ResizeObserver` do contexto.
+- `world.setRenderContext(context)` / `world.getRenderContext()` /
+  `world.getViewport()` — como o contexto chega aos sistemas de render.
 - `elementCanvasSize()` — o buffer segue o tamanho de layout do elemento
   (padrão); `fixedCanvasSize(w, h)` — trava num tamanho fixo.
 - `DEFAULT_VERTEX_SHADER` / `DEFAULT_FRAGMENT_SHADER` — os shaders embutidos.
 
 ### Messaging
 
-`MessageBus.getInstance()` expõe `on` (devolve o disposer), `emit`,
-`clearListeners`, `clearAllListeners` e `hasListeners`. As constantes de evento
+`MessageBus` expõe `on` (devolve o disposer), `emit`, `clearListeners`,
+`clearAllListeners` e `hasListeners`. Cada `World` cria o seu (`getMessageBus()`);
+para fazer dois mundos conversarem, passe o mesmo em `new World({ messageBus })`.
+As constantes de evento
 ficam em `MessageTypes`: `WORLD_EVENTS`, `COLLISION_EVENTS`, `PLAYER_EVENTS`,
 `GAME_EVENTS`, `PROJECTILE_EVENTS`, `ENTITY_EVENTS` e `MESSAGE_TYPES`.
 
@@ -294,8 +318,8 @@ fornecido pelo host — quem escuta os eventos do DOM é o host, não a engine.
 
 ### Scaffold
 
-`Game` (interface), `BaseGame` (implementação abstrata) e `Manager` (singleton
-com o loop, o contexto e o input).
+`Game` (interface) e `BaseGame` (implementação abstrata). Quem roda o jogo é a
+`Engine` (`src/Engine.ts`), instanciada por canvas.
 
 ## Limitações conhecidas
 
@@ -307,16 +331,12 @@ A engine é um projeto em andamento; o que ela **não** faz hoje:
 - **Velocidades são "por frame a 60fps".** `PhysicsSystem` multiplica tudo por
   `deltaTime * TARGET_FPS`, e o delta não é clampado: uma aba que volta do
   segundo plano gera um passo gigante e teleporta as entidades.
-- **`PhysicsSystem` depende do contexto WebGL**, de onde tira as dimensões do
-  canvas para o wrap — mesmo num mundo sem render.
 - **Colisão é O(n²)** e sem broadphase. `ColliderType.Polygon` existe no enum mas
   não tem teste próprio: cai num círculo aproximado.
 - **Um draw call por entidade** (e por partícula, no `EmitterRenderSystem`). Não
   há batching, instancing nem atlas.
 - **`ParticleSystem` ignora `deltaTime`** no deslocamento das partículas; só a
   vida usa dt.
-- **Estado global.** `Manager`, `MessageBus` e o contexto WebGL são singletons —
-  dois jogos no mesmo documento não são suportados.
 - **Eventos não são tipados**: o payload é `Record<string, unknown>` e cabe ao
   consumidor fazer o cast.
 
@@ -347,7 +367,7 @@ src/
 │   ├── rendering/    # WebGLContext, canvasSize, shaders, particles
 │   └── systems/      # sistemas prontos
 ├── scaffold/         # Game, BaseGame
-├── manager.ts        # Manager (loop + contexto + input)
+├── Engine.ts         # Engine (loop + contexto + input), uma por canvas
 └── index.ts          # barrel público
 ```
 

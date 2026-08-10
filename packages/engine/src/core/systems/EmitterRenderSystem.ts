@@ -2,7 +2,6 @@ import { System } from "../base/System";
 import { Entity } from "../base/Entity";
 import { ParticleEmitterComponent } from "../components/ParticleEmitterComponent";
 import { TransformComponent } from "../components/TransformComponent";
-import { getWebGLContext } from "../rendering/Context";
 
 export class EmitterRenderSystem extends System {
   readonly componentTypes = [
@@ -15,7 +14,10 @@ export class EmitterRenderSystem extends System {
   private static readonly QUAD = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
 
   update(entities: Entity[]): void {
-    const { gl, canvas, positionBuffer, locs } = getWebGLContext();
+    const context = this.world?.getRenderContext();
+    if (!context) return;
+
+    const { gl, canvas, positionBuffer, locs } = context;
 
     entities.forEach((e) => {
       const base = e.getComponent<TransformComponent>(TransformComponent.TYPE)!;

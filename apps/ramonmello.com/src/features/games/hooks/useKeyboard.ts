@@ -4,6 +4,12 @@ import { useEffect, useRef } from "react";
 export function useKeyboard(): KeyboardHandler {
   const keysRef = useRef<KeyState>({});
 
+  // Stable across renders: the handler is an effect dependency downstream, and
+  // a fresh object each render would tear the engine down on every re-render.
+  const handlerRef = useRef<KeyboardHandler>({
+    getState: () => ({ ...keysRef.current }),
+  });
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       keysRef.current[e.code] = true;
@@ -28,9 +34,5 @@ export function useKeyboard(): KeyboardHandler {
     };
   }, []);
 
-  const getState = (): KeyState => {
-    return { ...keysRef.current };
-  };
-
-  return { getState };
+  return handlerRef.current;
 }

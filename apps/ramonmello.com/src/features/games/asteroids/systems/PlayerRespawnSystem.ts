@@ -1,5 +1,4 @@
-// engine/core/systems/PlayerRespawnSystem.ts
-import { System, World, MessageBus, PLAYER_EVENTS } from "@engine/core";
+import { System, World, PLAYER_EVENTS } from "@engine/core";
 import { createShipEntity } from "@games/asteroids/entities/ShipEntity";
 
 export class PlayerRespawnSystem extends System {
@@ -11,13 +10,13 @@ export class PlayerRespawnSystem extends System {
   init(world: World): void {
     this.world = world;
 
-    MessageBus.getInstance().on(PLAYER_EVENTS.DIE, () => {
+    // Via world.on: o disposer fica com o World e cai junto no clear/destroy,
+    // em vez de sobreviver solto num barramento de processo.
+    world.on(PLAYER_EVENTS.DIE, () => {
       setTimeout(() => {
-        const player = createShipEntity();
+        const player = createShipEntity(this.world.getViewport());
         this.world.addEntity(player);
-        MessageBus.getInstance().emit(PLAYER_EVENTS.RESPAWN, {
-          entity: player,
-        });
+        this.world.emit(PLAYER_EVENTS.RESPAWN, { entity: player });
       }, this.respawnDelay);
     });
   }

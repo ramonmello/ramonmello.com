@@ -4,7 +4,7 @@
  * They are strings rather than `.glsl` files fetched over HTTP so the engine
  * does not depend on a server exposing them at a fixed route: it works under a
  * subpath, in tests, and outside this site. To change the render pipeline, pass
- * your own GLSL to `initWebGLContext(canvas, { vertexShader, fragmentShader })`
+ * your own GLSL to `createWebGLContext(canvas, { vertexShader, fragmentShader })`
  * instead of editing this file.
  *
  * The render systems (`RenderSystem`, `EmitterRenderSystem`) expect the

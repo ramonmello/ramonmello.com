@@ -4,7 +4,7 @@ import {
   PhysicsComponent,
   RenderComponent,
   ColliderComponent,
-  getWebGLContext,
+  type CanvasSize,
 } from "@engine/core";
 import { AsteroidComponent } from "../components/AsteroidComponent";
 
@@ -20,9 +20,10 @@ function generateAsteroidVertices(size: number, points = 8): Float32Array {
   return new Float32Array(verts);
 }
 
-export function createAsteroidEntity(size = 30): Entity {
-  const { canvas } = getWebGLContext();
-
+export function createAsteroidEntity(
+  viewport: CanvasSize,
+  size = 30
+): Entity {
   // Position outside the screen (random side)
   const side = Math.floor(Math.random() * 4);
   let x = 0,
@@ -30,19 +31,19 @@ export function createAsteroidEntity(size = 30): Entity {
   switch (side) {
     case 0:
       y = -size;
-      x = Math.random() * canvas.width;
+      x = Math.random() * viewport.width;
       break; // top
     case 1:
-      x = canvas.width + size;
-      y = Math.random() * canvas.height;
+      x = viewport.width + size;
+      y = Math.random() * viewport.height;
       break; // right
     case 2:
-      y = canvas.height + size;
-      x = Math.random() * canvas.width;
+      y = viewport.height + size;
+      x = Math.random() * viewport.width;
       break; // bottom
     case 3:
       x = -size;
-      y = Math.random() * canvas.height;
+      y = Math.random() * viewport.height;
       break; // left
   }
 

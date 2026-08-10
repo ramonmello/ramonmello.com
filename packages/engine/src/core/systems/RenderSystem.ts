@@ -2,7 +2,6 @@ import { System } from "../base/System";
 import { Entity } from "../base/Entity";
 import { TransformComponent } from "../components/TransformComponent";
 import { RenderComponent } from "../components/RenderComponent";
-import { getWebGLContext } from "../rendering/Context";
 
 export class RenderSystem extends System {
   readonly componentTypes = [TransformComponent.TYPE, RenderComponent.TYPE];
@@ -23,7 +22,10 @@ export class RenderSystem extends System {
   }
 
   update(entities: Entity[]): void {
-    const { gl, canvas, positionBuffer, locs } = getWebGLContext();
+    const context = this.world?.getRenderContext();
+    if (!context) return;
+
+    const { gl, canvas, positionBuffer, locs } = context;
 
     if (this.clearScreen) {
       gl.clearColor(

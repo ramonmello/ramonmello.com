@@ -1,33 +1,29 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useKeyboard } from "@games/hooks/useKeyboard";
-import { asteroidsGame } from "@games/asteroids";
-import { Manager } from "@engine/core";
+import { AsteroidsGame } from "@games/asteroids";
+import { Engine, KeyboardInputSystem } from "@engine/core";
 
 export function GameWrapper() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const keyboard = useKeyboard();
 
   useEffect(() => {
-    let cancelled = false;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    (async () => {
-      if (cancelled || !canvasRef.current) return;
+    // One engine per mount, owning its own game, world and WebGL context —
+    // so a StrictMode double-effect builds and tears down two independent
+    // runs instead of corrupting a shared one.
+    const engine = new Engine({
+      canvas,
+      game: new AsteroidsGame(),
+      input: new KeyboardInputSystem(keyboard),
+    });
 
-      const manager = Manager.getInstance();
-      manager.setInputHandler(keyboard);
-      if (manager.hasActiveGame()) {
-        manager.rebindCanvas(canvasRef.current!);
-        manager.resumeGame();
-      } else {
-        await manager.startGame(asteroidsGame, canvasRef.current!);
-      }
-    })();
+    void engine.start();
 
-    return () => {
-      cancelled = true;
-      Manager.getInstance().pauseGame();
-    };
+    return () => engine.destroy();
   }, [keyboard]);
 
   return (

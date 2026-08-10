@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { BaseGame } from "./BaseGame";
 import type { GameConfig } from "./Game";
 import { World } from "../core/base/World";
-import { MessageBus } from "../core/messaging/MessageBus";
 import { GAME_EVENTS } from "../core/messaging/MessageTypes";
 import type { InputSystem } from "../core/input/InputSystem";
 
@@ -28,7 +27,6 @@ describe("BaseGame", () => {
   let game: StubGame;
 
   beforeEach(() => {
-    MessageBus.getInstance().clearAllListeners();
     game = new StubGame();
   });
 

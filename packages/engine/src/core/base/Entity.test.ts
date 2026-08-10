@@ -19,9 +19,18 @@ class OtherComponent extends Component {
   }
 }
 
+/** Entidade já ligada a um barramento, como sai de World.addEntity. */
+function attached(bus: MessageBus, id?: string, name?: string): Entity {
+  const entity = new Entity(id, name);
+  entity.setMessageBus(bus);
+  return entity;
+}
+
 describe("Entity", () => {
+  let bus: MessageBus;
+
   beforeEach(() => {
-    MessageBus.getInstance().clearAllListeners();
+    bus = new MessageBus();
   });
 
   describe("identidade", () => {
@@ -115,9 +124,9 @@ describe("Entity", () => {
 
   describe("mensageria", () => {
     it("injeta contexto da entidade no payload emitido", () => {
-      const entity = new Entity("player", "Player Ship");
+      const entity = attached(bus, "player", "Player Ship");
       const handler = vi.fn();
-      MessageBus.getInstance().on("shoot", handler);
+      bus.on("shoot", handler);
 
       entity.emit("shoot", { power: 3 });
 
@@ -134,53 +143,82 @@ describe("Entity", () => {
      * então uma chave `entity` no payload sobrescreve a entidade emissora.
      */
     it("o payload do chamador sobrescreve o contexto injetado", () => {
-      const entity = new Entity("player");
+      const entity = attached(bus, "player");
       const impostor = new Entity("impostor");
       const handler = vi.fn();
-      MessageBus.getInstance().on("shoot", handler);
+      bus.on("shoot", handler);
 
       entity.emit("shoot", { entity: impostor });
 
       expect(handler.mock.calls[0][0].entity).toBe(impostor);
     });
 
-    it("clearAllListeners descarta as inscrições feitas via on()", () => {
+    it("emitir sem barramento é um no-op", () => {
+      expect(() => new Entity().emit("shoot", {})).not.toThrow();
+    });
+
+    it("registra no barramento as inscrições feitas antes do attach", () => {
       const entity = new Entity();
       const handler = vi.fn();
       entity.on("tick", handler);
 
+      entity.setMessageBus(bus);
+      bus.emit("tick", {});
+
+      expect(handler).toHaveBeenCalledOnce();
+    });
+
+    it("migra as inscrições ao trocar de barramento", () => {
+      const entity = attached(bus);
+      const handler = vi.fn();
+      entity.on("tick", handler);
+      const other = new MessageBus();
+
+      entity.setMessageBus(other);
+      bus.emit("tick", {});
+      other.emit("tick", {});
+
+      expect(handler).toHaveBeenCalledOnce();
+    });
+
+    it("clearAllListeners descarta as inscrições feitas via on()", () => {
+      const entity = attached(bus);
+      const handler = vi.fn();
+      entity.on("tick", handler);
+
       entity.clearAllListeners();
-      MessageBus.getInstance().emit("tick", {});
+      bus.emit("tick", {});
 
       expect(handler).not.toHaveBeenCalled();
     });
 
     it("clearAllListeners não afeta inscrições de outras entidades", () => {
-      const a = new Entity();
-      const b = new Entity();
+      const a = attached(bus);
+      const b = attached(bus);
       const handlerB = vi.fn();
       a.on("tick", vi.fn());
       b.on("tick", handlerB);
 
       a.clearAllListeners();
-      MessageBus.getInstance().emit("tick", {});
+      bus.emit("tick", {});
 
       expect(handlerB).toHaveBeenCalledOnce();
     });
   });
 
   describe("destroy", () => {
-    it("remove todos os componentes e as inscrições", () => {
-      const entity = new Entity();
+    it("remove todos os componentes, as inscrições e o barramento", () => {
+      const entity = attached(bus);
       const component = new FakeComponent();
       const handler = vi.fn();
       entity.addComponent(component).addComponent(new OtherComponent());
       entity.on("tick", handler);
 
       entity.destroy();
-      MessageBus.getInstance().emit("tick", {});
+      bus.emit("tick", {});
 
       expect(entity.components.size).toBe(0);
+      expect(entity.getMessageBus()).toBeUndefined();
       expect(component.onDetach).toHaveBeenCalledOnce();
       expect(handler).not.toHaveBeenCalled();
     });
