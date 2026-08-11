@@ -64,7 +64,7 @@ export class ProjectileSystem extends System {
     if (expired && this.world) {
       entity.emit(PROJECTILE_EVENTS.EXPIRE, { entity });
 
-      this.world.removeEntity(entity.id);
+      this.world.commands.destroy(entity.id);
     }
   }
 
@@ -89,7 +89,7 @@ export class ProjectileSystem extends System {
       sourceEntity
     );
 
-    this.world.addEntity(projectile);
+    this.world.commands.spawn(projectile);
   }
 
   private calculateProjectilePosition(

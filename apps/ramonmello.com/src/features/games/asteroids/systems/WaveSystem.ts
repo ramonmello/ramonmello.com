@@ -39,7 +39,7 @@ export class WaveSystem extends System {
     const n = this.baseAsteroids + increase;
     const viewport = world.getViewport();
     for (let i = 0; i < n; i++) {
-      world.addEntity(createAsteroidEntity(viewport));
+      world.commands.spawn(createAsteroidEntity(viewport));
     }
     this.remaining = n;
     console.log(`Wave ${this.wave} started with ${n} asteroids`);

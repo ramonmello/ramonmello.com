@@ -52,6 +52,7 @@ import { World, Entity, System, TransformComponent } from "@engine/core";
 | **System**       | Só lógica. Declara `componentTypes`, tem `priority` (menor roda antes), um `enabled` e uma `phase` (`"simulation"`, o padrão, ou `"render"`). |
 | **World**        | Guarda entidades e sistemas. `update(deltaTime)` roda os sistemas de simulação e `render(alpha)` os de render, em ordem de prioridade, passando para cada um apenas as entidades que têm todos os `componentTypes` exigidos. |
 | **MessageBus**   | Publish/subscribe por string. Cada `World` tem o seu, e `World` e `Entity` delegam `emit`/`on` para ele.     |
+| **CommandBuffer**| Fila de mudanças estruturais (`spawn`, `destroy`, `addComponent`, `removeComponent`) drenada no fim de cada passo. Cada `World` tem a sua, em `world.commands`. |
 | **Engine**       | Amarra um canvas, um jogo e uma fonte de input. Cria o contexto WebGL e roda o loop de `requestAnimationFrame` em passo fixo. |
 
 O `World` não roda sozinho: alguém precisa chamar `update` e `render`. Quem faz
@@ -244,6 +245,55 @@ Um exemplo real dessa ligação está em
 e o jogo inteiro em
 [`features/games/asteroids`](../../apps/ramonmello.com/src/features/games/asteroids).
 
+### Mutando o mundo durante o passo
+
+Criar e destruir entidades no meio de um `update()` é o caso comum — o tiro que
+expira, o asteroide atingido, a explosão que nasce da colisão. Só que essas
+mudanças mexem justamente na coleção que o `World` está percorrendo, então elas
+não acontecem na hora: viram comandos numa fila (`world.commands`), aplicada
+num único ponto do frame.
+
+```ts
+world.commands.spawn(entity);
+world.commands.destroy(entity.id);
+world.commands.addComponent(entity.id, new ShieldComponent());
+world.commands.removeComponent(entity.id, ShieldComponent.TYPE);
+```
+
+A ordem dentro de um passo é fixa:
+
+```
+beginStep dos componentes → preUpdate → sistemas de simulação → postUpdate → comandos
+```
+
+Ou seja: **todos os sistemas de um passo enxergam o mesmo mundo**. Ninguém
+aparece nem some no meio da rodada, e não importa se a prioridade do sistema é
+1 ou 130. Os comandos são aplicados na ordem em que foram enfileirados, e o que
+os efeitos deles enfileirarem (um handler de `entityRemoved` pedindo outra
+remoção, por exemplo) fica para o passo seguinte — uma reação em cadeia nunca
+vira loop dentro de um flush.
+
+`world.addEntity()` e `world.removeEntity()` continuam existindo e agem na
+hora, mas **só fora do passo** — na montagem do jogo, num `setTimeout`, num
+handler de UI. Chamadas de dentro do passo caem sozinhas na fila, então código
+antigo não quebra; a diferença é que o efeito aparece no fim do passo, não na
+linha seguinte.
+
+Como uma entidade condenada ainda existe até o fim do passo, use
+`world.isAlive(id)` — e não `getEntity(id)` — antes de reagir a ela. Dois
+projéteis podem atingir o mesmo asteroide no mesmo passo; só o primeiro deve
+pontuar:
+
+```ts
+if (!world.isAlive(asteroid.id)) return;
+
+world.emit(ENTITY_EVENTS.DESTROYED, { entity: asteroid });
+world.commands.destroy(asteroid.id);
+```
+
+A fase de render é de leitura: um sistema de render que mutar o mundo tem o
+comando enfileirado, e ele só é aplicado no fim do passo seguinte.
+
 ### 4. Reagindo a eventos
 
 Colisão não é resolvida pela engine: ela detecta e avisa. Quem decide o que
@@ -259,7 +309,7 @@ const unsubscribe = world.getMessageBus().on(COLLISION_EVENTS.DETECT, (data) => 
     world: World;
   };
 
-  world.removeEntity(entityB.id);
+  world.commands.destroy(entityB.id);
   entityA.emit("scoreChanged", { points: 100 });
 });
 
@@ -267,6 +317,10 @@ unsubscribe();
 ```
 
 O cast é necessário: o payload trafega como `Record<string, unknown>`.
+
+`collision.detect` é emitido de dentro do passo, então a remoção vai para a
+fila de comandos (ver [Mutando o mundo durante o
+passo](#mutando-o-mundo-durante-o-passo)).
 
 Dentro de um sistema, prefira `world.on(...)`: o disposer fica com o `World` e
 cai junto no `clear()`/`destroy()`, em vez de sobreviver solto no barramento.
@@ -328,7 +382,7 @@ o `RenderComponent` desenha geometria com uma cor sólida.
 | Sistema                | `priority` | Requer                       | O que faz                                                                                                                    |
 | ---------------------- | ---------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `PhysicsSystem`        | 10         | transform + physics          | Integra aceleração → velocidade → posição, aplica `friction` (exponencial), corta em `maxSpeed`, gira por `angularVelocity` e faz wrap nas bordas do canvas quando `wrapAroundEdges`. |
-| `ParticleSystem`       | 15         | transform + particleEmitter  | Avança as partículas, descarta as expiradas e remove a entidade quando o emissor termina.                                      |
+| `ParticleSystem`       | 15         | transform + particleEmitter  | Avança as partículas, descarta as expiradas e enfileira a remoção da entidade quando o emissor termina.                        |
 | `CollisionSystem`      | 50         | transform + collider         | Testa todos os pares e emite `collision.detect`; se nenhum dos dois for `isTrigger`, emite também `collision.resolve`.          |
 | `RenderSystem`         | 100        | transform + render           | Fase `render`. Limpa a tela (opcional), ordena por `zIndex` e desenha cada entidade na pose interpolada, com o `drawMode` escolhido. |
 | `EmitterRenderSystem`  | 110        | transform + particleEmitter  | Fase `render`. Desenha cada partícula como um quad, com alpha decaindo pela vida.                                              |
@@ -347,6 +401,15 @@ antes da física.
 - `elementCanvasSize()` — o buffer segue o tamanho de layout do elemento
   (padrão); `fixedCanvasSize(w, h)` — trava num tamanho fixo.
 - `DEFAULT_VERTEX_SHADER` / `DEFAULT_FRAGMENT_SHADER` — os shaders embutidos.
+
+### Mutação
+
+`world.commands` é um `CommandBuffer` com `spawn(entity)`, `destroy(id)`,
+`addComponent(id, component)`, `removeComponent(id, type)`, `isDestroying(id)`,
+`size` e `clear()`. O `World` chama `flush()` no fim de cada `update`; chamar na
+mão só faz sentido quando se dirige o mundo passo a passo fora da `Engine`.
+`world.isAlive(id)` responde se a entidade existe **e** não está enfileirada
+para remoção.
 
 ### Messaging
 

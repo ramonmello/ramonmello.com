@@ -103,8 +103,19 @@ describe("ParticleSystem", () => {
     world.addEntity(entity);
 
     system.update([entity], 1.5);
+    world.commands.flush();
 
     expect(world.getEntity(entity.id)).toBeUndefined();
+  });
+
+  it("enfileira a remoção em vez de mexer no mundo durante o update", () => {
+    const { entity } = makeEmitter();
+    world.addEntity(entity);
+
+    system.update([entity], 1.5);
+
+    expect(world.getEntity(entity.id)).toBe(entity);
+    expect(world.commands.size).toBe(1);
   });
 
   it("mantém a entidade enquanto houver partícula viva", () => {
@@ -112,6 +123,7 @@ describe("ParticleSystem", () => {
     world.addEntity(entity);
 
     system.update([entity], 0.5);
+    world.commands.flush();
 
     expect(world.getEntity(entity.id)).toBe(entity);
   });

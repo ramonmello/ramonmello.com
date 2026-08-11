@@ -236,12 +236,7 @@ describe("World", () => {
       expect(order).toEqual(["pre", "system", "post"]);
     });
 
-    /**
-     * Caracterização: a lista entregue ao sistema é uma cópia, então remover
-     * entidades de dentro de um update() não corrompe a iteração corrente.
-     * É só isso que segura hoje a ausência de um command buffer no core.
-     */
-    it("tolera remoção de entidades durante o update do sistema", () => {
+    it("remove entidades pedidas durante o update, ao fim do passo", () => {
       const system = new SpySystem([TagComponent.TYPE]);
       system.update = (entities) => {
         entities.forEach((e) => world.removeEntity(e.id));
@@ -251,8 +246,133 @@ describe("World", () => {
       world.addEntity(entityWith("b", new TagComponent()));
       world.start();
 
-      expect(() => world.update(0.016)).not.toThrow();
+      world.update(0.016);
+
       expect(world.getAllEntities()).toHaveLength(0);
+    });
+  });
+
+  /**
+   * O critério de aceite de #64: mutar o mundo de dentro de um sistema é
+   * seguro por contrato, não pela cópia acidental da lista de entidades.
+   */
+  describe("mutação durante o passo", () => {
+    /** Sistema que dispara `mutate` no seu update e registra o que enxergou. */
+    function mutatingSystem(mutate: () => void): SpySystem {
+      const system = new SpySystem([], 50);
+      system.update = () => {
+        system.seen.push({
+          ids: world.getAllEntities().map((e) => e.id),
+          deltaTime: 0,
+        });
+        mutate();
+      };
+      return system;
+    }
+
+    it("adia a remoção pedida por um sistema até o fim do passo", () => {
+      const doomed = entityWith("doomed");
+      const observer = new SpySystem([], 100);
+      const killer = mutatingSystem(() => world.removeEntity("doomed"));
+      world.addSystem(killer).addSystem(observer).addEntity(doomed);
+      world.start();
+
+      world.update(0.016);
+
+      expect(observer.seen[0].ids).toEqual(["doomed"]);
+      expect(world.getEntity("doomed")).toBeUndefined();
+    });
+
+    it("adia a entrada de uma entidade criada por um sistema", () => {
+      const observer = new SpySystem([], 100);
+      const spawner = mutatingSystem(() => world.addEntity(entityWith("novo")));
+      world.addSystem(spawner).addSystem(observer);
+      world.start();
+
+      world.update(0.016);
+
+      expect(observer.seen[0].ids).toEqual([]);
+      expect(world.getEntity("novo")).toBeDefined();
+    });
+
+    it("adia também o que é pedido de dentro de um handler de evento", () => {
+      world.on("boom", () => world.removeEntity("doomed"));
+      const system = mutatingSystem(() => world.emit("boom", {}));
+      world.addSystem(system).addEntity(entityWith("doomed"));
+      world.start();
+
+      world.update(0.016);
+
+      expect(world.getEntity("doomed")).toBeUndefined();
+    });
+
+    it("aplica os comandos depois do postUpdate, na ordem de enfileiramento", () => {
+      const order: string[] = [];
+      world.addEntity(entityWith("velha"));
+      world.on(WORLD_EVENTS.POST_UPDATE, () => order.push("post"));
+      world.on(WORLD_EVENTS.ENTITY_ADDED, (data) =>
+        order.push(`+${(data.entity as Entity).id}`)
+      );
+      world.on(WORLD_EVENTS.ENTITY_REMOVED, (data) =>
+        order.push(`-${data.entityId as string}`)
+      );
+      const system = mutatingSystem(() => {
+        world.addEntity(entityWith("a"));
+        world.removeEntity("velha");
+        world.addEntity(entityWith("b"));
+      });
+      world.addSystem(system);
+      world.start();
+
+      world.update(0.016);
+
+      expect(order).toEqual(["post", "+a", "-velha", "+b"]);
+    });
+
+    it("fora do passo a mutação continua imediata", () => {
+      world.start();
+
+      world.addEntity(entityWith("a"));
+
+      expect(world.getEntity("a")).toBeDefined();
+    });
+
+    it("isAlive nega uma entidade já enfileirada para remoção", () => {
+      const seen: boolean[] = [];
+      const system = mutatingSystem(() => {
+        world.removeEntity("doomed");
+        seen.push(world.isAlive("doomed"));
+      });
+      world.addSystem(system).addEntity(entityWith("doomed"));
+      world.start();
+
+      world.update(0.016);
+
+      expect(seen).toEqual([false]);
+    });
+
+    it("um sistema de render que muta não altera o mundo durante o desenho", () => {
+      const render = new SpyRenderSystem();
+      render.update = () => world.removeEntity("doomed");
+      world.addSystem(render).addEntity(entityWith("doomed"));
+      world.start();
+
+      world.render(0.5);
+
+      expect(world.getEntity("doomed")).toBeDefined();
+      expect(world.commands.size).toBe(1);
+    });
+
+    it("clear descarta os comandos pendentes", () => {
+      const render = new SpyRenderSystem();
+      render.update = () => world.addEntity(entityWith("novo"));
+      world.addSystem(render);
+      world.start();
+      world.render(0);
+
+      world.clear();
+
+      expect(world.commands.size).toBe(0);
     });
   });
 

@@ -31,7 +31,7 @@ export class ParticleSystem extends System {
       pe.particles = pe.particles.filter((p) => p.life < p.maxLife);
 
       if (pe.elapsed >= pe.maxLifetime && pe.particles.length === 0) {
-        this.world?.removeEntity(e.id);
+        this.world?.commands.destroy(e.id);
       }
     });
   }

@@ -1,3 +1,4 @@
+import { CommandBuffer } from "./CommandBuffer";
 import { Entity } from "./Entity";
 import { System, SystemPhase } from "./System";
 import {
@@ -24,6 +25,12 @@ export interface WorldOptions {
  * by side without sharing anything.
  */
 export class World {
+  /**
+   * Structural changes asked for during a step, applied at the end of it.
+   * See {@link CommandBuffer}.
+   */
+  readonly commands: CommandBuffer;
+
   /**
    * Message bus scoped to this world.
    * @private
@@ -66,9 +73,17 @@ export class World {
    */
   private running: boolean = false;
 
+  /**
+   * True while a step or a draw is in flight. Structural mutations asked for
+   * meanwhile are recorded instead of performed.
+   * @private
+   */
+  private stepping: boolean = false;
+
   constructor(options: WorldOptions = {}) {
     this.messageBus = options.messageBus ?? new MessageBus();
     this.renderContext = options.renderContext;
+    this.commands = new CommandBuffer(this);
   }
 
   /**
@@ -105,10 +120,19 @@ export class World {
   /**
    * Adds an entity to the world, wires it to the world's bus, and emits an
    * 'entityAdded' event.
+   *
+   * Called mid-step — from a system's `update`, or from a handler of an event
+   * a system emitted — it queues a spawn on {@link commands} instead, and the
+   * entity only shows up once the step ends.
    * @param entity - The entity instance to add.
    * @returns The world instance for method chaining.
    */
   addEntity(entity: Entity): World {
+    if (this.stepping) {
+      this.commands.spawn(entity);
+      return this;
+    }
+
     this.entities.set(entity.id, entity);
     entity.setMessageBus(this.messageBus);
     this.emit("entityAdded", { entity });
@@ -117,15 +141,35 @@ export class World {
 
   /**
    * Removes and destroys an entity by its ID, then emits an 'entityRemoved' event.
+   *
+   * Mid-step it queues a destroy on {@link commands}, so the entity survives
+   * until the end of the step and every system of that step sees the same
+   * world. Use {@link isAlive} to tell an entity already condemned from one
+   * still in play.
    * @param id - The unique identifier of the entity to remove.
    */
   removeEntity(id: string): void {
+    if (this.stepping) {
+      this.commands.destroy(id);
+      return;
+    }
+
     const entity = this.entities.get(id);
     if (entity) {
       entity.destroy();
       this.entities.delete(id);
       this.emit("entityRemoved", { entityId: id });
     }
+  }
+
+  /**
+   * Whether an entity is in the world and not already queued for destruction.
+   * The check systems want before reacting to something: two collisions in the
+   * same step can both name the same asteroid, but only the first should score.
+   * @param id - The unique identifier of the entity.
+   */
+  isAlive(id: string): boolean {
+    return this.entities.has(id) && !this.commands.isDestroying(id);
   }
 
   /**
@@ -217,19 +261,34 @@ export class World {
    * Advances the simulation by one step: refreshes the per-step state of every
    * component, moves the clock, emits the hooks, and runs each enabled
    * simulation system. Drawing is a separate pass — see {@link render}.
+   *
+   * The step is closed by flushing {@link commands}, so the order within a
+   * step is fixed: `beginStep` → `preUpdate` → simulation systems → `postUpdate`
+   * → structural changes. Nothing appears or disappears while the systems run.
    * @param deltaTime - Time elapsed since the last update (in seconds).
    */
   update(deltaTime: number): void {
     if (!this.running) return;
     this.elapsedTime += deltaTime;
     this.entities.forEach((entity) => entity.beginStep());
-    this.emit("preUpdate", { deltaTime });
-    this.runSystems("simulation", deltaTime);
-    this.emit("postUpdate", { deltaTime });
+
+    this.stepping = true;
+    try {
+      this.emit("preUpdate", { deltaTime });
+      this.runSystems("simulation", deltaTime);
+      this.emit("postUpdate", { deltaTime });
+    } finally {
+      this.stepping = false;
+    }
+
+    this.commands.flush();
   }
 
   /**
    * Draws the world once, running the render systems and nothing else.
+   *
+   * The pass is meant to be read-only; a render system that mutates anyway
+   * only gets its command queued, and it lands at the end of the next step.
    * @param alpha - How far past the last simulated step this frame sits, in
    * `[0, 1)`. Render systems blend the poses of the two surrounding steps by
    * it, so motion stays smooth on displays whose refresh rate is not the
@@ -237,7 +296,13 @@ export class World {
    */
   render(alpha: number = 0): void {
     if (!this.running) return;
-    this.runSystems("render", alpha);
+
+    this.stepping = true;
+    try {
+      this.runSystems("render", alpha);
+    } finally {
+      this.stepping = false;
+    }
   }
 
   private runSystems(phase: SystemPhase, deltaTime: number): void {
@@ -270,9 +335,11 @@ export class World {
   }
 
   /**
-   * Clears all entities, systems, listeners, resets elapsed time, and emits 'worldCleared'.
+   * Clears all entities, systems, listeners and queued commands, resets
+   * elapsed time, and emits 'worldCleared'.
    */
   clear(): void {
+    this.commands.clear();
     this.entities.forEach((entity) => entity.destroy());
     this.entities.clear();
     this.systems = [];

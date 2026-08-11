@@ -43,6 +43,6 @@ export class ExplosionSpawnSystem extends System {
     e.addComponent(new TransformComponent(pos.x, pos.y, 0));
     e.addComponent(new ParticleEmitterComponent(EXPLOSION_SMALL));
 
-    this.world.addEntity(e);
+    this.world.commands.spawn(e);
   }
 }

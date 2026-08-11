@@ -1,7 +1,6 @@
 import { World, Entity, System } from "@engine/core";
 import {
   COLLISION_EVENTS,
-  WORLD_EVENTS,
   PROJECTILE_EVENTS,
   PLAYER_EVENTS,
   ENTITY_EVENTS,
@@ -16,13 +15,10 @@ export class AsteroidCollisionSystem extends System {
 
   priority = 0;
 
-  private pendingRemovals = new Set<string>();
-
   init(world: World): void {
     this.world = world;
 
     world.on(COLLISION_EVENTS.DETECT, this.handleCollision);
-    world.on(WORLD_EVENTS.POST_UPDATE, this.flushRemovals);
   }
 
   update(): void {}
@@ -32,6 +28,10 @@ export class AsteroidCollisionSystem extends System {
   private handleCollision = (data: MessageData): void => {
     const entityA = data.entityA as Entity;
     const entityB = data.entityB as Entity;
+
+    // The same step can report an asteroid hit by two projectiles. Only the
+    // first pair scores: the rest find it already queued for destruction.
+    if (!this.isAlive(entityA) || !this.isAlive(entityB)) return;
 
     const projA = entityA.getComponent<ProjectileComponent>(
       ProjectileComponent.TYPE
@@ -47,9 +47,6 @@ export class AsteroidCollisionSystem extends System {
       const projectile = projA ? entityA : entityB;
       const asteroid = this.isAsteroid(entityA) ? entityA : entityB;
 
-      this.markForRemoval(projectile);
-      this.markForRemoval(asteroid);
-
       const t = asteroid.getComponent<TransformComponent>(
         TransformComponent.TYPE
       );
@@ -60,6 +57,10 @@ export class AsteroidCollisionSystem extends System {
           asteroid,
         });
       }
+
+      this.world?.emit(ENTITY_EVENTS.DESTROYED, { entity: asteroid });
+      this.destroy(projectile);
+      this.destroy(asteroid);
       return;
     }
 
@@ -75,30 +76,21 @@ export class AsteroidCollisionSystem extends System {
 
       if (shipComp.invincible) return; // colisão ignorada se invencível
 
-      this.markForRemoval(ship);
-
       const s = ship.getComponent<TransformComponent>(TransformComponent.TYPE);
 
       ship.emit(PLAYER_EVENTS.DIE, {
         position: { x: s?.position.x, y: s?.position.y },
       });
+
+      this.destroy(ship);
     }
   };
 
-  private markForRemoval(entity: Entity): void {
-    this.pendingRemovals.add(entity.id);
+  private isAlive(entity: Entity): boolean {
+    return this.world?.isAlive(entity.id) ?? false;
   }
 
-  private flushRemovals = (): void => {
-    for (const id of this.pendingRemovals) {
-      const entity = this.world?.getEntity(id);
-      if (entity) {
-        if (this.isAsteroid(entity)) {
-          this.world?.emit(ENTITY_EVENTS.DESTROYED, { entity });
-        }
-        this.world?.removeEntity(id);
-      }
-    }
-    this.pendingRemovals.clear();
-  };
+  private destroy(entity: Entity): void {
+    this.world?.commands.destroy(entity.id);
+  }
 }
