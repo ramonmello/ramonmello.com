@@ -54,8 +54,9 @@ export function createAsteroidEntity(
   e.addComponent(new AsteroidComponent(size));
 
   /* Physics */
-  // TODO: Verify if this work with 30 FPS (change to use deltaTime)
-  const speed = 0.5 + Math.random(); // 0.5–1.5 px/frame
+  // Per fixed step, not per rendered frame: the engine always integrates in
+  // 1/60s slices, so this speed means the same on any display.
+  const speed = 0.5 + Math.random(); // 0.5–1.5 px/step
   const angle = Math.random() * Math.PI * 2;
   e.addComponent(
     new PhysicsComponent(

@@ -49,13 +49,13 @@ import { World, Entity, System, TransformComponent } from "@engine/core";
 | ---------------- | --------------------------------------------------------------------------------------------------------- |
 | **Entity**       | Um `id` (UUID por padrão), um `name` opcional e um `Map` de componentes indexado por `type`.                 |
 | **Component**    | Só dados. Cada classe expõe um `type` (string) e um `static TYPE` usado para buscar e declarar dependências. |
-| **System**       | Só lógica. Declara `componentTypes`, tem `priority` (menor roda antes) e um `enabled`.                       |
-| **World**        | Guarda entidades e sistemas. A cada `update(deltaTime)` roda os sistemas em ordem de prioridade, passando para cada um apenas as entidades que têm todos os `componentTypes` exigidos. |
+| **System**       | Só lógica. Declara `componentTypes`, tem `priority` (menor roda antes), um `enabled` e uma `phase` (`"simulation"`, o padrão, ou `"render"`). |
+| **World**        | Guarda entidades e sistemas. `update(deltaTime)` roda os sistemas de simulação e `render(alpha)` os de render, em ordem de prioridade, passando para cada um apenas as entidades que têm todos os `componentTypes` exigidos. |
 | **MessageBus**   | Publish/subscribe por string. Cada `World` tem o seu, e `World` e `Entity` delegam `emit`/`on` para ele.     |
-| **Engine**       | Amarra um canvas, um jogo e uma fonte de input. Cria o contexto WebGL e roda o loop de `requestAnimationFrame`. |
+| **Engine**       | Amarra um canvas, um jogo e uma fonte de input. Cria o contexto WebGL e roda o loop de `requestAnimationFrame` em passo fixo. |
 
-O `World` não roda sozinho: alguém precisa chamar `update` a cada frame. Quem faz
-isso por você é a `Engine` (ver [Uso básico](#uso-básico)).
+O `World` não roda sozinho: alguém precisa chamar `update` e `render`. Quem faz
+isso por você é a `Engine` (ver [O loop](#o-loop)).
 
 Nada disso é global: uma `Engine` por canvas, um `MessageBus` por `World`, um
 `WebGLContext` por canvas. Dois jogos podem coexistir no mesmo documento sem se
@@ -68,7 +68,13 @@ enxergar.
 Este trecho roda em qualquer lugar, inclusive em Node — não depende de canvas:
 
 ```ts
-import { Entity, System, TransformComponent, World } from "@engine/core";
+import {
+  Entity,
+  FRAME_TIME,
+  System,
+  TransformComponent,
+  World,
+} from "@engine/core";
 
 class SpinSystem extends System {
   readonly componentTypes = [TransformComponent.TYPE];
@@ -93,8 +99,11 @@ player.addComponent(new TransformComponent(100, 100));
 world.addEntity(player);
 
 world.start();
-world.update(1 / 60);
+world.update(FRAME_TIME);
 ```
+
+Fora da `Engine`, quem chama `update` decide o passo — mas os sistemas assumem
+`FRAME_TIME`, então é ele que você quer aqui.
 
 Componentes são instanciados e passados prontos (`new TransformComponent(x, y)`),
 e `addComponent` devolve a entidade, então dá para encadear. Sistemas são
@@ -188,6 +197,43 @@ export function mount(canvas: HTMLCanvasElement) {
 então chamá-la duas vezes (ou em paralelo) não duplica sistemas nem entidades.
 `pause()`/`resume()` param e retomam o loop, e `setCanvas()` move a run para
 outro elemento, recompilando o contexto.
+
+### O loop
+
+A simulação anda em fatias de tamanho fixo (`FRAME_TIME`, 1/60s), nunca no delta
+cru do `requestAnimationFrame`. Cada frame acumula o tempo decorrido, gasta o
+acumulador em passos inteiros e desenha uma vez:
+
+```
+frameTime = min(now - lastTime, MAX_FRAME_TIME)   // teto de 250ms
+accumulator += frameTime
+
+while (accumulator >= FRAME_TIME) {
+  world.update(FRAME_TIME)                        // fase "simulation"
+  accumulator -= FRAME_TIME
+}
+
+world.render(accumulator / FRAME_TIME)            // fase "render"
+```
+
+Três consequências para quem escreve sistemas e jogos:
+
+- **O `deltaTime` é sempre o mesmo.** O mesmo input dá o mesmo resultado num
+  laptop a 30Hz e num monitor a 144Hz. Calibrar velocidades "por frame" voltou a
+  ser uma medida bem definida.
+- **Frames longos são fatiados, não simulados de uma vez.** Uma aba que volta do
+  segundo plano devendo um segundo é simulada até o teto (`MAX_FRAME_TIME`, 15
+  passos) e o resto é descartado — ninguém atravessa um collider por causa disso.
+- **Render interpola.** `world.render(alpha)` recebe o quanto o frame avançou
+  além do último passo, e `TransformComponent` guarda a pose do início do passo
+  (`previousPosition`/`previousRotation`) para os sistemas de render misturarem
+  via `interpolatedX/Y/Rotation(alpha)`. Um sistema que desenha precisa declarar
+  `readonly phase: SystemPhase = "render"`; sem isso ele roda na simulação e
+  desenha uma vez por passo.
+
+Teleportes não devem ser interpolados: `setPosition`/`setRotation` já descartam
+a pose anterior, e o wrap de bordas do `PhysicsSystem` desloca a origem junto
+com o corpo.
 
 Dentro dos sistemas, o estado do teclado chega normalizado pelo
 `KeyboardInputSystem`: `getDirection()` devolve `{ x, y }` a partir das setas e
@@ -284,11 +330,12 @@ o `RenderComponent` desenha geometria com uma cor sólida.
 | `PhysicsSystem`        | 10         | transform + physics          | Integra aceleração → velocidade → posição, aplica `friction` (exponencial), corta em `maxSpeed`, gira por `angularVelocity` e faz wrap nas bordas do canvas quando `wrapAroundEdges`. |
 | `ParticleSystem`       | 15         | transform + particleEmitter  | Avança as partículas, descarta as expiradas e remove a entidade quando o emissor termina.                                      |
 | `CollisionSystem`      | 50         | transform + collider         | Testa todos os pares e emite `collision.detect`; se nenhum dos dois for `isTrigger`, emite também `collision.resolve`.          |
-| `RenderSystem`         | 100        | transform + render           | Limpa a tela (opcional), ordena por `zIndex` e desenha cada entidade com o `drawMode` escolhido.                               |
-| `EmitterRenderSystem`  | 110        | transform + particleEmitter  | Desenha cada partícula como um quad, com alpha decaindo pela vida.                                                             |
+| `RenderSystem`         | 100        | transform + render           | Fase `render`. Limpa a tela (opcional), ordena por `zIndex` e desenha cada entidade na pose interpolada, com o `drawMode` escolhido. |
+| `EmitterRenderSystem`  | 110        | transform + particleEmitter  | Fase `render`. Desenha cada partícula como um quad, com alpha decaindo pela vida.                                              |
 
-Prioridade menor roda antes. Sistemas do jogo entram na mesma escala — no
-Asteroids, o controle da nave usa `priority = 1` para rodar antes da física.
+Prioridade menor roda antes, dentro de cada fase. Sistemas do jogo entram na
+mesma escala — no Asteroids, o controle da nave usa `priority = 1` para rodar
+antes da física.
 
 ### Rendering
 
@@ -328,9 +375,11 @@ A engine é um projeto em andamento; o que ela **não** faz hoje:
 - **Física é cinemática.** Não há gravidade nem resposta de colisão. O evento
   `collision.resolve` só avisa que dois corpos sólidos se tocaram — separar ou
   rebater é responsabilidade do jogo.
-- **Velocidades são "por frame a 60fps".** `PhysicsSystem` multiplica tudo por
-  `deltaTime * TARGET_FPS`, e o delta não é clampado: uma aba que volta do
-  segundo plano gera um passo gigante e teleporta as entidades.
+- **Velocidades são "por passo fixo".** `PhysicsSystem` multiplica tudo por
+  `deltaTime * TARGET_FPS`, e a `Engine` só entrega passos de 1/60s — a unidade
+  é bem definida, mas continua sendo px/passo, não px/segundo.
+- **A interpolação é do transform, não das partículas.** O `EmitterRenderSystem`
+  interpola a posição do emissor; as partículas em si andam por passo.
 - **Colisão é O(n²)** e sem broadphase. `ColliderType.Polygon` existe no enum mas
   não tem teste próprio: cai num círculo aproximado.
 - **Um draw call por entidade** (e por partícula, no `EmitterRenderSystem`). Não
@@ -341,7 +390,8 @@ A engine é um projeto em andamento; o que ela **não** faz hoje:
   consumidor fazer o cast.
 
 APIs de navegador realmente usadas: canvas + WebGL 1.0, `ResizeObserver`,
-`requestAnimationFrame`, `performance.now()` e `crypto.randomUUID()`. Nada de
+`requestAnimationFrame` (que já traz o relógio do loop no timestamp do callback)
+e `crypto.randomUUID()`. Nada de
 `window`, `document` ou storage — há um teste (`src/browserGlobals.test.ts`) que
 falha se algum módulo passar a referenciá-los.
 
@@ -361,7 +411,7 @@ src/
 ├── core/
 │   ├── base/         # Entity, Component, System, World
 │   ├── components/   # componentes prontos
-│   ├── config/       # TARGET_FPS, FRAME_TIME
+│   ├── config/       # TARGET_FPS, FRAME_TIME, MAX_FRAME_TIME
 │   ├── input/        # InputSystem, KeyboardInputSystem
 │   ├── messaging/    # MessageBus, MessageTypes
 │   ├── rendering/    # WebGLContext, canvasSize, shaders, particles

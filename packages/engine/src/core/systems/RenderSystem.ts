@@ -1,10 +1,12 @@
-import { System } from "../base/System";
+import { System, SystemPhase } from "../base/System";
 import { Entity } from "../base/Entity";
 import { TransformComponent } from "../components/TransformComponent";
 import { RenderComponent } from "../components/RenderComponent";
 
 export class RenderSystem extends System {
   readonly componentTypes = [TransformComponent.TYPE, RenderComponent.TYPE];
+
+  readonly phase: SystemPhase = "render";
 
   priority = 100;
 
@@ -21,7 +23,7 @@ export class RenderSystem extends System {
     this.backgroundColor = backgroundColor;
   }
 
-  update(entities: Entity[]): void {
+  update(entities: Entity[], alpha: number = 0): void {
     const context = this.world?.getRenderContext();
     if (!context) return;
 
@@ -67,10 +69,10 @@ export class RenderSystem extends System {
       gl.uniform2f(locs.u_resolution, canvas.width, canvas.height);
       gl.uniform2f(
         locs.u_translation,
-        transform.position.x,
-        transform.position.y
+        transform.interpolatedX(alpha),
+        transform.interpolatedY(alpha)
       );
-      gl.uniform1f(locs.u_rotation, transform.rotation);
+      gl.uniform1f(locs.u_rotation, transform.interpolatedRotation(alpha));
       gl.uniform4f(
         locs.u_color,
         render.color.r,

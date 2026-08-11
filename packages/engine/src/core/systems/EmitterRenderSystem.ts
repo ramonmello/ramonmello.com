@@ -1,4 +1,4 @@
-import { System } from "../base/System";
+import { System, SystemPhase } from "../base/System";
 import { Entity } from "../base/Entity";
 import { ParticleEmitterComponent } from "../components/ParticleEmitterComponent";
 import { TransformComponent } from "../components/TransformComponent";
@@ -9,11 +9,13 @@ export class EmitterRenderSystem extends System {
     ParticleEmitterComponent.TYPE,
   ];
 
+  readonly phase: SystemPhase = "render";
+
   priority = 110;
 
   private static readonly QUAD = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
 
-  update(entities: Entity[]): void {
+  update(entities: Entity[], alpha: number = 0): void {
     const context = this.world?.getRenderContext();
     if (!context) return;
 
@@ -24,6 +26,11 @@ export class EmitterRenderSystem extends System {
       const pe = e.getComponent<ParticleEmitterComponent>(
         ParticleEmitterComponent.TYPE
       )!;
+
+      // Particles hold offsets from the emitter, so interpolating the emitter
+      // once carries the whole cloud with it.
+      const baseX = base.interpolatedX(alpha);
+      const baseY = base.interpolatedY(alpha);
 
       pe.particles.forEach((p) => {
         const alpha = 1 - p.life / p.maxLife;
@@ -43,11 +50,7 @@ export class EmitterRenderSystem extends System {
         gl.enableVertexAttribArray(locs.a_position);
         gl.vertexAttribPointer(locs.a_position, 2, gl.FLOAT, false, 0, 0);
 
-        gl.uniform2f(
-          locs.u_translation,
-          base.position.x + p.x,
-          base.position.y + p.y
-        );
+        gl.uniform2f(locs.u_translation, baseX + p.x, baseY + p.y);
         gl.uniform4f(locs.u_color, 1, 1, 1, alpha);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       });

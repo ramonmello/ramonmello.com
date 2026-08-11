@@ -30,4 +30,11 @@ export abstract class Component {
    * Optional lifecycle hook invoked when this component is detached from its entity.
    */
   onDetach?(): void;
+
+  /**
+   * Optional hook invoked at the top of every simulation step, before any
+   * system runs. Components that keep per-step history — a transform saving
+   * the pose the renderer interpolates from — refresh it here.
+   */
+  beginStep?(): void;
 }

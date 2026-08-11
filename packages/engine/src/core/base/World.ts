@@ -1,5 +1,5 @@
 import { Entity } from "./Entity";
-import { System } from "./System";
+import { System, SystemPhase } from "./System";
 import {
   MessageBus,
   MessageData,
@@ -214,21 +214,40 @@ export class World {
   }
 
   /**
-   * Executes a single update cycle: increments elapsed time, emits hooks, and processes each enabled system.
+   * Advances the simulation by one step: refreshes the per-step state of every
+   * component, moves the clock, emits the hooks, and runs each enabled
+   * simulation system. Drawing is a separate pass — see {@link render}.
    * @param deltaTime - Time elapsed since the last update (in seconds).
    */
   update(deltaTime: number): void {
     if (!this.running) return;
     this.elapsedTime += deltaTime;
+    this.entities.forEach((entity) => entity.beginStep());
     this.emit("preUpdate", { deltaTime });
+    this.runSystems("simulation", deltaTime);
+    this.emit("postUpdate", { deltaTime });
+  }
+
+  /**
+   * Draws the world once, running the render systems and nothing else.
+   * @param alpha - How far past the last simulated step this frame sits, in
+   * `[0, 1)`. Render systems blend the poses of the two surrounding steps by
+   * it, so motion stays smooth on displays whose refresh rate is not the
+   * simulation's step rate.
+   */
+  render(alpha: number = 0): void {
+    if (!this.running) return;
+    this.runSystems("render", alpha);
+  }
+
+  private runSystems(phase: SystemPhase, deltaTime: number): void {
     for (const system of this.systems) {
-      if (!system.enabled) continue;
+      if (!system.enabled || system.phase !== phase) continue;
       const eligibleEntities = Array.from(this.entities.values()).filter(
         (entity) => system.shouldProcessEntity(entity)
       );
       system.update(eligibleEntities, deltaTime);
     }
-    this.emit("postUpdate", { deltaTime });
   }
 
   /**

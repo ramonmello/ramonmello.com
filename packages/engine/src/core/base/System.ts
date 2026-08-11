@@ -2,6 +2,15 @@ import { Entity } from "./Entity";
 import { World } from "./World";
 
 /**
+ * Half of the loop a system belongs to.
+ *
+ * `simulation` systems run on the fixed step and always see the same delta;
+ * `render` systems run once per animation frame, however many steps that frame
+ * happened to advance.
+ */
+export type SystemPhase = "simulation" | "render";
+
+/**
  * Abstract base class for ECS systems.
  * Systems define logic operating on entities with specific components.
  */
@@ -10,6 +19,12 @@ export abstract class System {
    * Array of component type identifiers required by this system.
    */
   abstract readonly componentTypes: string[];
+
+  /**
+   * Phase this system runs in. Simulation is the default; only systems that
+   * draw belong in the render phase.
+   */
+  readonly phase: SystemPhase = "simulation";
 
   /**
    * Reference to the world instance this system is registered with.
@@ -53,7 +68,9 @@ export abstract class System {
   /**
    * Executes system logic for the provided entities.
    * @param entities - Array of entities matching component requirements.
-   * @param deltaTime - Time elapsed since the last update (in seconds).
+   * @param deltaTime - Seconds elapsed since the previous step. Render-phase
+   * systems get the interpolation factor in `[0, 1)` instead: how far past the
+   * last simulated step the frame being drawn sits.
    */
   abstract update(entities: Entity[], deltaTime: number): void;
 }

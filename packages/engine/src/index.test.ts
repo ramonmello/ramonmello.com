@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import * as engine from "./index";
-import type { InputSystem } from "./index";
+import type { InputSystem, SystemPhase } from "./index";
 
 describe("barrel público", () => {
   /**
@@ -34,6 +34,19 @@ describe("barrel público", () => {
     expect(engine.Engine).toBeTypeOf("function");
     expect(engine.createWebGLContext).toBeTypeOf("function");
     expect(engine.DEFAULT_VERTEX_SHADER).toBeTypeOf("string");
+  });
+
+  /**
+   * A cadência do loop é contrato: um jogo calibra velocidades por passo e
+   * precisa das mesmas constantes que a `Engine` usa, além do tipo que marca um
+   * sistema como sendo da fase de render.
+   */
+  it("expõe as constantes do passo fixo e o tipo de fase", () => {
+    const phase: SystemPhase = "render";
+
+    expect(engine.FRAME_TIME).toBeCloseTo(1 / engine.TARGET_FPS);
+    expect(engine.MAX_FRAME_TIME).toBeGreaterThan(engine.FRAME_TIME);
+    expect(phase).toBe("render");
   });
 
   /**

@@ -163,6 +163,32 @@ describe("PhysicsSystem", () => {
       expect(transform.position.y).toBeCloseTo(15);
     });
 
+    it("traz de volta saltos maiores que o canvas inteiro", () => {
+      const physics = new PhysicsComponent(1, true);
+      physics.setVelocity(-100, 0);
+      const { entity, transform } = makeBody(physics, 0, 0);
+
+      // -6000px de uma vez: somar `width` uma única vez não bastaria, e antes
+      // do wrap por módulo a entidade sumia da tela para sempre.
+      system.update([entity], ONE_FRAME * 60);
+
+      expect(transform.position.x).toBeCloseTo(400);
+    });
+
+    it("arrasta a origem da interpolação junto com o corpo", () => {
+      const physics = new PhysicsComponent(1, true);
+      physics.setVelocity(-20, 0);
+      const { entity, transform } = makeBody(physics, 5, 5);
+
+      system.update([entity], ONE_FRAME);
+
+      // Sem deslocar a origem, o render desenharia o corpo atravessando a
+      // tela inteira no frame do wrap em vez de reaparecer do outro lado.
+      expect(transform.position.x - transform.previousPosition.x).toBeCloseTo(
+        -20
+      );
+    });
+
     it("não reposiciona quando wrapAroundEdges está desligado", () => {
       const physics = new PhysicsComponent(1, false);
       physics.setVelocity(-20, 0);
@@ -187,32 +213,27 @@ describe("PhysicsSystem", () => {
   });
 
   /**
-   * O loop de jogo repassa o deltaTime cru do requestAnimationFrame, sem
-   * clamp. Os dois testes abaixo fixam as consequências disso — servem de
-   * baseline para quando o fixed timestep entrar.
+   * O sistema integra linearmente no deltaTime que recebe; quem garante que
+   * esse deltaTime é sempre um passo fixo é a Engine. Ver `Engine.test.ts`
+   * para o clamp e a decomposição de frames longos.
    */
-  describe("caracterização: deltaTime não é limitado", () => {
-    it("um frame longo teleporta o corpo (tunneling)", () => {
+  describe("regressão: passos fixos não teleportam", () => {
+    it("60 passos de um frame chegam onde o salto único chegava, mas passando pelo caminho", () => {
       const physics = new PhysicsComponent(1, false);
       physics.setVelocity(10, 0);
       const { entity, transform } = makeBody(physics);
 
-      // Aba em segundo plano por 1s: timeScale vira 60 em um único passo.
-      system.update([entity], 1);
+      const jumps: number[] = [];
+      let previous = transform.position.x;
+      for (let i = 0; i < 60; i++) {
+        system.update([entity], ONE_FRAME);
+        jumps.push(transform.position.x - previous);
+        previous = transform.position.x;
+      }
 
       expect(transform.position.x).toBeCloseTo(600);
-    });
-
-    it("o wrap é de passagem única e não recupera saltos maiores que o canvas", () => {
-      const physics = new PhysicsComponent(1, true);
-      physics.setVelocity(-100, 0);
-      const { entity, transform } = makeBody(physics, 0, 0);
-
-      // Desloca -6000px de uma vez: somar `width` uma única vez não basta.
-      system.update([entity], ONE_FRAME * 60);
-
-      expect(transform.position.x).toBeCloseTo(-5200);
-      expect(transform.position.x).toBeLessThan(0);
+      // Nenhum passo pula um collider: o maior salto é o de um frame.
+      expect(Math.max(...jumps)).toBeCloseTo(10);
     });
   });
 

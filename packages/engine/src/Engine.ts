@@ -7,6 +7,7 @@ import {
   WebGLContextOptions,
 } from "./core/rendering/Context";
 import { CanvasSizeSource, fixedCanvasSize } from "./core/rendering/canvasSize";
+import { FRAME_TIME, MAX_FRAME_TIME } from "./core/config/time";
 
 export interface EngineOptions {
   /** Canvas this engine draws to. One engine, one canvas. */
@@ -51,7 +52,9 @@ export class Engine {
 
   private animFrameId?: number;
 
-  private lastTime: number = 0;
+  private lastTime?: number;
+
+  private accumulator: number = 0;
 
   private running: boolean = false;
 
@@ -206,21 +209,44 @@ export class Engine {
       : undefined;
   }
 
+  /**
+   * Drives the run on a fixed step. The simulation only ever advances in
+   * `FRAME_TIME` slices, so the same input yields the same outcome on a 30Hz
+   * laptop and a 144Hz monitor; whatever elapsed time does not fill a whole
+   * slice stays in the accumulator and becomes the interpolation factor the
+   * render pass draws with.
+   */
   private startLoop(): void {
     if (this.running || this.destroyed) return;
 
     this.running = true;
-    this.lastTime = performance.now() / 1000;
+    this.lastTime = undefined;
+    this.accumulator = 0;
 
     const loop = (timestamp: number) => {
       if (!this.running) return;
 
       const now = timestamp / 1000;
-      const deltaTime = now - this.lastTime;
+      // The first frame of a run has no predecessor to measure against: it
+      // only seeds the clock. Later frames are capped, so a tab returning
+      // from the background is simulated up to the ceiling and no further.
+      const frameTime =
+        this.lastTime === undefined
+          ? 0
+          : Math.min(Math.max(now - this.lastTime, 0), MAX_FRAME_TIME);
+
       this.lastTime = now;
+      this.accumulator += frameTime;
 
       this.input?.update();
-      this.getWorld().update(deltaTime);
+
+      const world = this.getWorld();
+      while (this.accumulator >= FRAME_TIME) {
+        world.update(FRAME_TIME);
+        this.accumulator -= FRAME_TIME;
+      }
+
+      world.render(this.accumulator / FRAME_TIME);
 
       this.animFrameId = requestAnimationFrame(loop);
     };

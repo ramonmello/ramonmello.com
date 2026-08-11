@@ -4,6 +4,24 @@ import { TransformComponent } from "../components/TransformComponent";
 import { PhysicsComponent } from "../components/PhysicsComponent";
 import { TARGET_FPS } from "../config/time";
 
+/**
+ * Folds one axis back into `[0, size)`, however many viewports away it landed.
+ * The interpolation origin travels with the body so the renderer draws the
+ * crossing as a wrap instead of a dash back across the screen.
+ */
+function wrapAxis(
+  transform: TransformComponent,
+  axis: "x" | "y",
+  size: number
+): void {
+  const wrapped = ((transform.position[axis] % size) + size) % size;
+  const shift = wrapped - transform.position[axis];
+  if (shift === 0) return;
+
+  transform.position[axis] = wrapped;
+  transform.previousPosition[axis] += shift;
+}
+
 export class PhysicsSystem extends System {
   readonly componentTypes = [TransformComponent.TYPE, PhysicsComponent.TYPE];
 
@@ -57,10 +75,8 @@ export class PhysicsSystem extends System {
       if (transform.rotation < 0) transform.rotation += Math.PI * 2;
 
       if (physics.wrapAroundEdges && bounded) {
-        if (transform.position.x < 0) transform.position.x += width;
-        if (transform.position.x > width) transform.position.x -= width;
-        if (transform.position.y < 0) transform.position.y += height;
-        if (transform.position.y > height) transform.position.y -= height;
+        wrapAxis(transform, "x", width);
+        wrapAxis(transform, "y", height);
       }
 
       physics.acceleration.x = 0;

@@ -2,9 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Engine } from "./Engine";
 import { BaseGame } from "./scaffold/BaseGame";
 import type { GameConfig } from "./scaffold/Game";
-import { System } from "./core/base/System";
+import { System, SystemPhase } from "./core/base/System";
 import { Entity } from "./core/base/Entity";
 import { TransformComponent } from "./core/components/TransformComponent";
+import { PhysicsComponent } from "./core/components/PhysicsComponent";
+import { PhysicsSystem } from "./core/systems/PhysicsSystem";
+import { FRAME_TIME, MAX_FRAME_TIME, TARGET_FPS } from "./core/config/time";
 import type { InputSystem } from "./core/input/InputSystem";
 import { GAME_EVENTS } from "./core/messaging/MessageTypes";
 
@@ -54,11 +57,18 @@ class SpySystem extends System {
   }
 }
 
+/** Registra o alpha de interpolação de cada passada do render. */
+class SpyRenderSystem extends SpySystem {
+  readonly phase: SystemPhase = "render";
+  priority = 100;
+}
+
 class StubGame extends BaseGame {
   name = "Stub";
   description = "Jogo mínimo para exercitar a Engine";
 
   readonly spy = new SpySystem();
+  readonly renderSpy = new SpyRenderSystem();
   createSystemsCalls = 0;
 
   protected getDefaultConfig(): GameConfig {
@@ -67,12 +77,36 @@ class StubGame extends BaseGame {
 
   protected createSystems(): void {
     this.createSystemsCalls += 1;
-    this.world.addSystem(this.spy);
+    this.world.addSystem(this.spy).addSystem(this.renderSpy);
   }
 
   protected createEntities(): void {
     const entity = new Entity("stub-entity");
     entity.addComponent(new TransformComponent(0, 0));
+    this.world.addEntity(entity);
+  }
+}
+
+/** Um corpo andando 10px por passo fixo, para medir o que a simulação andou. */
+class BodyGame extends BaseGame {
+  name = "Body";
+  description = "Um corpo em movimento retilíneo uniforme";
+
+  readonly transform = new TransformComponent(0, 0);
+
+  protected getDefaultConfig(): GameConfig {
+    return { debug: false };
+  }
+
+  protected createSystems(): void {
+    this.world.addSystem(new PhysicsSystem());
+  }
+
+  protected createEntities(): void {
+    const physics = new PhysicsComponent(1, false);
+    physics.setVelocity(10, 0);
+    const entity = new Entity("body");
+    entity.addComponent(this.transform).addComponent(physics);
     this.world.addEntity(entity);
   }
 }
@@ -109,8 +143,18 @@ function createFrameLoop() {
       pending = new Map();
       due.forEach((callback) => callback(now));
     },
+    /**
+     * Primeiro frame de um run: sem frame anterior para medir, ele só acerta o
+     * relógio da Engine. Nenhum passo de simulação sai daqui.
+     */
+    seed() {
+      this.tick(0);
+    },
   };
 }
+
+/** 0,105s: seis passos fixos e um resto de 0,3 de passo — longe das bordas. */
+const SIX_STEPS_MS = 105;
 
 describe("Engine", () => {
   let frames: ReturnType<typeof createFrameLoop>;
@@ -151,12 +195,13 @@ describe("Engine", () => {
     });
   });
 
-  it("start inicializa o jogo e passa a rodar o world a cada frame", async () => {
+  it("start inicializa o jogo e passa a rodar o world nos frames seguintes", async () => {
     const game = new StubGame();
     const engine = new Engine({ canvas: createCanvas(), game, input: stubInput });
 
     await engine.start();
-    frames.tick(16);
+    frames.seed();
+    frames.tick(20);
 
     expect(game.isRunning()).toBe(true);
     expect(engine.isRunning()).toBe(true);
@@ -187,9 +232,25 @@ describe("Engine", () => {
     expect(game.spy.seen).toHaveLength(0);
 
     engine.resume();
-    frames.tick(16);
+    frames.seed();
+    frames.tick(20);
 
     expect(game.spy.seen).toHaveLength(1);
+  });
+
+  it("o tempo parado não vira simulação ao retomar", async () => {
+    const game = new StubGame();
+    const engine = new Engine({ canvas: createCanvas(), game });
+    await engine.start();
+    frames.seed();
+
+    engine.pause();
+    engine.resume();
+    // O relógio andou dez segundos entre o pause e este frame; retomar zera o
+    // acumulador, então nada disso é devido à simulação.
+    frames.tick(10_000);
+
+    expect(game.spy.seen).toHaveLength(0);
   });
 
   it("um start depois do pause apenas retoma, sem reinicializar", async () => {
@@ -234,6 +295,102 @@ describe("Engine", () => {
   });
 
   /**
+   * Critério de aceite de #63: a simulação anda em fatias de `FRAME_TIME`,
+   * independentes da taxa de atualização da tela, e um frame longo é limitado
+   * em vez de simulado inteiro.
+   */
+  describe("fixed timestep", () => {
+    let game: StubGame;
+    let engine: Engine;
+
+    beforeEach(async () => {
+      game = new StubGame();
+      engine = new Engine({ canvas: createCanvas(), game });
+      await engine.start();
+      frames.seed();
+    });
+
+    it("o frame que abre o run só acerta o relógio", () => {
+      expect(game.spy.seen).toHaveLength(0);
+    });
+
+    it("fatia o tempo do frame em passos de tamanho fixo", () => {
+      frames.tick(SIX_STEPS_MS);
+
+      expect(game.spy.seen).toHaveLength(6);
+      expect(game.spy.seen.every((deltaTime) => deltaTime === FRAME_TIME)).toBe(
+        true
+      );
+    });
+
+    it("guarda o que sobra de um frame curto em vez de simulá-lo", () => {
+      frames.tick(5);
+      frames.tick(5);
+      frames.tick(5);
+
+      // 15ms ainda não fecham um passo de 16,67ms.
+      expect(game.spy.seen).toHaveLength(0);
+
+      frames.tick(5);
+
+      expect(game.spy.seen).toHaveLength(1);
+    });
+
+    it("limita um frame de um segundo ao teto em vez de simular tudo", () => {
+      frames.tick(1000);
+
+      // 60 passos seriam a duração crua; o teto corta em 250ms.
+      expect(game.spy.seen).toHaveLength(MAX_FRAME_TIME * TARGET_FPS);
+    });
+
+    it("desenha uma vez por frame, com o resto do acumulador como alpha", () => {
+      frames.tick(SIX_STEPS_MS);
+
+      expect(game.renderSpy.seen).toHaveLength(2);
+      expect(game.renderSpy.seen[0]).toBe(0);
+      expect(game.renderSpy.seen[1]).toBeCloseTo(0.3);
+    });
+
+    it("desenha também nos frames que não fecham nenhum passo", () => {
+      frames.tick(5);
+
+      expect(game.spy.seen).toHaveLength(0);
+      expect(game.renderSpy.seen).toHaveLength(2);
+    });
+  });
+
+  describe("determinismo", () => {
+    async function runBody(drive: () => void): Promise<number> {
+      const game = new BodyGame();
+      await new Engine({ canvas: createCanvas(), game }).start();
+      frames.seed();
+      drive();
+      return game.transform.position.x;
+    }
+
+    it("o mesmo tempo total chega ao mesmo lugar, seja qual for o corte em frames", async () => {
+      const single = await runBody(() => frames.tick(205));
+
+      frames = createFrameLoop();
+      const split = await runBody(() => {
+        frames.tick(100);
+        frames.tick(105);
+      });
+
+      // 12 passos de 10px nos dois caminhos.
+      expect(single).toBeCloseTo(120);
+      expect(split).toBeCloseTo(single);
+    });
+
+    it("um frame de um segundo anda o teto, não o segundo inteiro", async () => {
+      const clamped = await runBody(() => frames.tick(1000));
+
+      expect(clamped).toBeCloseTo(MAX_FRAME_TIME * TARGET_FPS * 10);
+      expect(clamped).toBeLessThan(TARGET_FPS * 10);
+    });
+  });
+
+  /**
    * Critério de aceite de #62: dois jogos, dois canvas, na mesma página.
    * Antes o Manager, o MessageBus e o contexto WebGL eram únicos por processo.
    */
@@ -248,7 +405,8 @@ describe("Engine", () => {
       const b = new Engine({ canvas: canvasB, game: gameB });
       await a.start();
       await b.start();
-      frames.tick(16);
+      frames.seed();
+      frames.tick(20);
 
       expect(a.getContext()).not.toBe(b.getContext());
       expect(gameA.getWorld().getMessageBus()).not.toBe(
@@ -274,11 +432,13 @@ describe("Engine", () => {
       await a.start();
       await b.start();
 
+      frames.seed();
+
       const handler = vi.fn();
       gameB.getWorld().on("evento-de-b", handler);
 
       a.destroy();
-      frames.tick(16);
+      frames.tick(20);
       gameB.getWorld().emit("evento-de-b", {});
 
       expect(b.isRunning()).toBe(true);

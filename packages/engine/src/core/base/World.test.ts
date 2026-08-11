@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Component } from "./Component";
 import { Entity } from "./Entity";
-import { System } from "./System";
+import { System, SystemPhase } from "./System";
 import { World } from "./World";
 import { MessageBus } from "../messaging/MessageBus";
 import { WORLD_EVENTS } from "../messaging/MessageTypes";
@@ -37,6 +37,11 @@ class SpySystem extends System {
   update(entities: Entity[], deltaTime: number): void {
     this.seen.push({ ids: entities.map((e) => e.id), deltaTime });
   }
+}
+
+/** Idem, mas na fase de render: só corre em `world.render()`. */
+class SpyRenderSystem extends SpySystem {
+  readonly phase: SystemPhase = "render";
 }
 
 function entityWith(id: string, ...components: Component[]): Entity {
@@ -187,6 +192,34 @@ describe("World", () => {
       expect(system.seen).toHaveLength(0);
     });
 
+    it("não corre os sistemas de render", () => {
+      const simulation = new SpySystem();
+      const render = new SpyRenderSystem();
+      world.addSystem(simulation).addSystem(render);
+      world.start();
+
+      world.update(0.016);
+
+      expect(simulation.seen).toHaveLength(1);
+      expect(render.seen).toHaveLength(0);
+    });
+
+    it("chama o hook de passo dos componentes antes dos sistemas", () => {
+      const order: string[] = [];
+      const component = new TagComponent();
+      component.beginStep = () => order.push("beginStep");
+      const system = new SpySystem();
+      system.update = () => {
+        order.push("system");
+      };
+      world.addSystem(system).addEntity(entityWith("a", component));
+      world.start();
+
+      world.update(0.016);
+
+      expect(order).toEqual(["beginStep", "system"]);
+    });
+
     it("emite preUpdate antes e postUpdate depois dos sistemas", () => {
       const order: string[] = [];
       world.on(WORLD_EVENTS.PRE_UPDATE, () => order.push("pre"));
@@ -220,6 +253,38 @@ describe("World", () => {
 
       expect(() => world.update(0.016)).not.toThrow();
       expect(world.getAllEntities()).toHaveLength(0);
+    });
+  });
+
+  describe("render", () => {
+    it("corre só os sistemas de render, com o alpha no lugar do delta", () => {
+      const simulation = new SpySystem();
+      const render = new SpyRenderSystem();
+      world.addSystem(simulation).addSystem(render);
+      world.start();
+
+      world.render(0.4);
+
+      expect(simulation.seen).toHaveLength(0);
+      expect(render.seen[0].deltaTime).toBe(0.4);
+    });
+
+    it("não avança o relógio da simulação", () => {
+      world.addSystem(new SpyRenderSystem());
+      world.start();
+
+      world.render(0.4);
+
+      expect(world.getElapsedTime()).toBe(0);
+    });
+
+    it("não desenha enquanto o world não foi iniciado", () => {
+      const render = new SpyRenderSystem();
+      world.addSystem(render);
+
+      world.render(0.4);
+
+      expect(render.seen).toHaveLength(0);
     });
   });
 

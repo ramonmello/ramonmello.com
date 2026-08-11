@@ -110,6 +110,14 @@ export class Entity {
   }
 
   /**
+   * Runs the per-step hook of every component attached to this entity. Called
+   * by {@link World.update} before the systems of the step.
+   */
+  beginStep(): void {
+    this.components.forEach((component) => component.beginStep?.());
+  }
+
+  /**
    * Attaches this entity to a bus, moving any subscription it already holds
    * over to it. Called by {@link World.addEntity}; passing undefined detaches.
    * @param messageBus - The bus to publish and subscribe on.
